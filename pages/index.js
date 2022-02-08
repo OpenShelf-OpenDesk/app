@@ -6,7 +6,10 @@ export default function Home() {
 		<div>
 			<Head>
 				<title>OpenShelf | OpenDesk</title>
-				<meta name="description" content="A NFT MarketPlace for censorship-resistant authorship." />
+				<meta
+					name="description"
+					content="A NFT MarketPlace for censorship-resistant authorship."
+				/>
 				{/* <link rel="icon" href="/favicon.ico" /> */}
 			</Head>
 		</div>
