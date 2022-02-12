@@ -1,3 +1,39 @@
+@import url("https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+	body {
+		@apply text-gray-700;
+		font-family: "Work Sans", sans-serif;
+	}
+}
+
+@layer components {
+	.button-od {
+		@apply rounded bg-od-500 px-8 py-1.5 text-sm font-semibold tracking-wider text-white duration-200 hover:bg-od-600 hover:shadow-md hover:shadow-od-400/60 active:scale-95;
+	}
+
+	.button-os {
+		@apply rounded bg-os-500 px-8 py-1.5 text-sm font-semibold tracking-wider text-white duration-200 hover:bg-os-600 hover:shadow-md hover:shadow-os-400/50 active:scale-95;
+	}
+	.input-text {
+		@apply rounded border-2 border-gray-300 py-2 px-3 text-sm font-medium placeholder:text-gray-400 required:placeholder:text-red-400 required:placeholder-shown:border-red-300 required:placeholder-shown:text-red-400 invalid:border-red-300 invalid:text-red-400 invalid:placeholder:text-red-400 focus:border-blue-300 focus:shadow-sm focus:shadow-blue-300/50 focus:outline-none focus:ring-0 required:placeholder-shown:focus:shadow-sm required:placeholder-shown:focus:shadow-red-300/50 invalid:focus:border-red-300 invalid:focus:shadow-sm invalid:focus:shadow-red-300/50 disabled:border-0 disabled:bg-gray-100 disabled:text-gray-400;
+	}
+
+	.peer-input-text {
+		@apply text-xs font-medium text-white after:text-red-400 peer-placeholder-shown:peer-required:after:content-['Required_*'] peer-invalid:after:content-['Invalid'];
+	}
+	/* .input-text {
+		@apply rounded border-2 border-gray-300 py-2 px-5 placeholder:text-sm placeholder:text-gray-400 focus:border-blue-300 focus:shadow-sm focus:shadow-blue-300/50 focus:outline-none focus:ring-0 disabled:border-0 disabled:bg-gray-100 disabled:text-gray-400;
+	}
+
+	.input-text-invalid {
+		@apply invalid:border-red-300 invalid:text-red-400 invalid:focus:shadow-sm invalid:focus:shadow-red-300/50;
+	}
+	.input-text-required {
+		@apply required:placeholder-shown:border-red-300 required:placeholder-shown:text-red-400 required:placeholder-shown:focus:shadow-sm required:placeholder-shown:focus:shadow-red-300/50;
+	} */
+}
