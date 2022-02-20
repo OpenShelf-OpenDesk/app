@@ -13,12 +13,17 @@ import {
     BellIcon as BellIconOutline
 } from "@heroicons/react/outline";
 import {useThemeContext} from "../contexts/Theme";
+import {useSignerContext} from "../contexts/Signer";
 
-const Navbar = ({seed}) => {
+const Navbar = ({seed, isSidebarOpen}) => {
     const {theme} = useThemeContext();
+    const {signer} = useSignerContext();
 
     return (
-        <nav className="flex items-center justify-end space-x-3 py-3 px-4 lg:space-x-5 lg:px-6">
+        <nav
+            className={`sticky top-0 z-20 flex w-full items-center justify-end space-x-3 bg-gradient-to-t from-transparent to-white py-3 px-4 backdrop-blur-sm transition duration-200 ease-in-out lg:space-x-5 lg:px-6 ${
+                isSidebarOpen ? "opacity-80" : "opacity-100"
+            }`}>
             <div
                 className={`flex h-10 w-10 cursor-pointer items-center justify-center space-x-2 overflow-x-auto rounded lg:cursor-default ${
                     theme === "os" ? "os-border-with-shadow" : "od-border-with-shadow"
@@ -45,7 +50,7 @@ const Navbar = ({seed}) => {
                     }`}
                 />
             </button>
-            <Dropdown buttonComponent={<Wallet seed={seed} />} theme={theme}>
+            <Dropdown buttonComponent={<Wallet seed={signer.address} />} theme={theme}>
                 <Item
                     name="Profile Settings"
                     activeIcon={<UserIconSolid className="h-4 w-4" />}

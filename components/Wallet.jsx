@@ -23,11 +23,11 @@ const Wallet = ({className, seed}) => {
                     className="m-0 hidden border-0 p-0 lg:inline"
                 />
                 <div
-                    className={`ml-1 flex flex-col items-start justify-between text-xs font-semibold lg:text-sm ${
-                        theme == "os" ? "text-os-500" : "text-od-500"
-                    }`}>
+                    className={`ml-1 flex flex-col items-start justify-between text-xs font-semibold text-gray-600 lg:text-sm`}>
                     <span>Personal Wallet</span>
-                    <span>0x4794......45525c</span>
+                    <span>
+                        {seed.substring(0, 6)}.....{seed.substring(seed.length - 6)}
+                    </span>
                 </div>
             </div>
             <ChevronDownIcon className={`h-4 w-4 ${theme == "os" ? "os-icon" : "od-icon"}`} />

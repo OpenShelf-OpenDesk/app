@@ -4,20 +4,31 @@ import {useThemeContext} from "../contexts/Theme";
 
 import React from "react";
 
-const Modal = ({isOpen, setOpen, title, description, buttonText}) => {
+const Modal = ({
+    isOpen,
+    setOpen,
+    title,
+    description,
+    buttonText,
+    onClick = () => {
+        return true;
+    }
+}) => {
     const {theme} = useThemeContext();
 
-    function closeModal() {
-        setOpen(false);
-    }
-
-    function openModal() {
-        setOpen(true);
+    async function closeModal() {
+        const result = await onClick();
+        result && setOpen(false);
     }
 
     return (
         <Transition appear show={isOpen} as={Fragment}>
-            <Dialog as="div" className="fixed inset-0 z-50 overflow-y-auto" onClose={closeModal}>
+            <Dialog
+                as="div"
+                className={`fixed inset-0 z-[90] overflow-y-auto transition duration-200 ease-in-out ${
+                    isOpen ? "backdrop-blur-md" : "backdrop-blur-none"
+                }`}
+                onClose={closeModal}>
                 <div className="min-h-screen px-4 text-center">
                     <Transition.Child
                         as={Fragment}

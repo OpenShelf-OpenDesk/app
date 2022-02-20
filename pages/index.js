@@ -1,5 +1,3 @@
-import Head from "next/head";
-import Image from "next/image";
 import {useState} from "react";
 import Identicon from "../components/Identicon";
 import Wallet from "../components/Wallet";
@@ -17,9 +15,8 @@ import {
 import ChipInputField from "../components/ChipInputField";
 import List from "../components/List";
 import Modal from "../components/Modal";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
 import {useLoadingContext} from "../contexts/Loading";
+import Layout from "../components/Layout";
 
 export default function Home() {
     const options = [
@@ -36,24 +33,12 @@ export default function Home() {
 
     const [req, setReq] = useState(false);
     const [chips, setChips] = useState([]);
-    const [isOpen, setOpen] = useState(false);
-    const [isSidebarOpen, setSidebarOpen] = useState(true);
     const [selected, setSelected] = useState(options[0]);
     const {setLoading} = useLoadingContext();
-
+    const [isModalOpen, setIsModalOpen] = useState(false);
     return (
-        <div className={`transition duration-300 ${isOpen && "blur-md"}`}>
-            <Head>
-                <title>OpenShelf | OpenDesk</title>
-                <meta
-                    name="description"
-                    content="A NFT MarketPlace for censorship-resistant authorship."
-                />
-                {/* <link rel="icon" href="/favicon.ico" /> */}
-            </Head>
-            <Sidebar setOpen={setSidebarOpen} open={isSidebarOpen} />
-            <div className={`transition duration-200 ${isSidebarOpen && "bg-black/20 blur-sm"}`}>
-                <Navbar seed={"0xBa5499261078989158fFA53BgFFaBA60aB1BbDA"} />
+        <Layout>
+            <div>
                 <div className="mx-auto mt-10 flex w-64 flex-col items-center space-y-6">
                     <Dropdown
                         buttonComponent={
@@ -86,7 +71,7 @@ export default function Home() {
                     <button
                         className="button-os"
                         onClick={() => {
-                            setOpen(true);
+                            setIsModalOpen(true);
                         }}>
                         OpenShelf
                     </button>
@@ -155,8 +140,8 @@ export default function Home() {
                     </button>
                 </form>
                 <Modal
-                    isOpen={isOpen}
-                    setOpen={setOpen}
+                    isOpen={isModalOpen}
+                    setOpen={setIsModalOpen}
                     title={"Payment Successful"}
                     description={
                         "Your payment has been successfully submitted. We’ve sent you an email with all of the details of your order. Your payment has been successfully submitted. We’ve sent you an email with all of the details of your order."
@@ -164,7 +149,7 @@ export default function Home() {
                     buttonText="Okay"
                 />
             </div>
-        </div>
+        </Layout>
     );
 }
 
