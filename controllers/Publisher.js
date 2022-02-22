@@ -1,8 +1,8 @@
-import {ethers} from "ethers";
+import { ethers } from "ethers";
 import addresses from "../contracts/addresses.json";
 import Publisher from "../contracts/abis/Publisher.json";
-import {NFTStorage, Blob} from "nft.storage";
-import {pdfjs} from "react-pdf";
+import { NFTStorage, Blob } from "nft.storage";
+import { pdfjs } from "react-pdf";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -24,11 +24,11 @@ async function extractCoverImage(file) {
     const pdf = await pdfjs.getDocument(data).promise;
     const canvas = document.createElement("canvas");
     const page = await pdf.getPage(1);
-    const viewport = page.getViewport({scale: 1});
+    const viewport = page.getViewport({ scale: 1 });
     const context = canvas.getContext("2d");
     canvas.height = viewport.height;
     canvas.width = viewport.width;
-    await page.render({canvasContext: context, viewport: viewport}).promise;
+    await page.render({ canvasContext: context, viewport: viewport }).promise;
     const image = canvas.toDataURL();
     canvas.remove();
     return image;
@@ -64,13 +64,15 @@ function connect(signer) {
     return new ethers.Contract(addresses.publisher, Publisher.abi, signer);
 }
 
-export async function publish(signer, bookDetails) {
+export async function publish(signer, bookDetails, cb) {
     const contract = connect(signer);
-    // ethers.utils.formatBytes32String("bookUri"),
+    cb(1);
     const uri = await uploadBook(bookDetails.file);
     console.log("book uploaded");
+    cb(2);
     const coverPage = await extractCoverImage(bookDetails.file);
     console.log("cover Page extracted");
+    cb(3);
     const coverPageUri = await uploadBookCoverImage(coverPage);
     console.log("cover page uploaded");
 
@@ -84,6 +86,7 @@ export async function publish(signer, bookDetails) {
         keywords: ["test"],
         copyrights: "Copyrights"
     };
+    cb(4);
     const metadataUri = await uploadBookMetadata(bookMetaData);
     console.log("metadata uploaded");
 
@@ -100,6 +103,7 @@ export async function publish(signer, bookDetails) {
     };
 
     try {
+        cb(5);
         const transaction = await contract.publish(
             newBook.uri,
             newBook.metadataUri,
@@ -111,10 +115,17 @@ export async function publish(signer, bookDetails) {
             newBook.supplyLimited,
             newBook.pricedBookSupplyLimit
         );
+        cb(6);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus.events);
+        cb(7);
     } catch (error) {
         console.error(error);
+        if (error.code === 4001) {
+            cb(-5);
+        } else {
+            cb(-6)
+        }
     }
 }
 
