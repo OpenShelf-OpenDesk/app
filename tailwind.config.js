@@ -10,8 +10,8 @@ module.exports = {
         },
         colors: {
             transparent: colors.transparent,
-            os: colors.emerald,
-            od: colors.violet,
+            od: colors.emerald,
+            os: colors.violet,
             black: colors.black,
             white: colors.white,
             gray: colors.gray,
