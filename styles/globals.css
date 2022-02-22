@@ -31,7 +31,7 @@
         @apply rounded bg-os-500 px-8 py-1.5 text-sm font-semibold tracking-wider text-white duration-200 hover:bg-os-600 hover:shadow-md focus:bg-os-600 focus:shadow-md focus:outline-none active:scale-95;
     }
     .input-text {
-        @apply rounded border-2 border-gray-300 bg-transparent py-2 px-3 text-sm font-medium placeholder:text-gray-400 required:placeholder:text-red-400 required:placeholder-shown:border-red-300 required:placeholder-shown:text-red-400 invalid:border-red-300 invalid:text-red-400 invalid:placeholder:text-red-400 focus:border-blue-300 focus:shadow focus:shadow-blue-300/50 focus:outline-none focus:ring-0 required:placeholder-shown:focus:shadow required:placeholder-shown:focus:shadow-red-300/50 invalid:focus:border-red-300 invalid:focus:shadow invalid:focus:shadow-red-300/50 disabled:border-0 disabled:bg-gray-100 disabled:text-gray-400;
+        @apply rounded border-2 border-gray-300 bg-transparent py-2 px-3 text-sm font-medium placeholder:text-gray-400 required:placeholder:text-red-400 required:placeholder-shown:border-red-300 required:placeholder-shown:text-red-400 invalid:border-red-300 invalid:text-red-400 invalid:placeholder:text-red-400 focus:border-blue-300 focus:shadow focus:shadow-blue-300/50 focus:outline-none focus:ring-0 required:placeholder-shown:focus:shadow required:placeholder-shown:focus:shadow-red-300/50 invalid:focus:border-red-300 invalid:focus:shadow invalid:focus:shadow-red-300/50 disabled:border-transparent disabled:bg-gray-100 disabled:text-gray-400;
     }
 
     .peer-input-text {

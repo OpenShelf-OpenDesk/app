@@ -22,10 +22,7 @@ const Layout = ({title, children}) => {
                 className={`transition duration-200 ${
                     isSidebarOpen && `${theme === "os" ? "bg-os-100/10" : "bg-od-200/10"} blur-sm`
                 } pl-[76px] lg:pl-24`}>
-                <Navbar
-                    seed={"0xBa5499261078989158fFA53BgFFaBA60aB1BbDA"}
-                    isSidebarOpen={isSidebarOpen}
-                />
+                <Navbar isSidebarOpen={isSidebarOpen} />
                 {children}
             </div>
             <Sidebar setOpen={setSidebarOpen} open={isSidebarOpen} />

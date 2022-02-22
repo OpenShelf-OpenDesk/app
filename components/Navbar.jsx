@@ -15,13 +15,13 @@ import {
 import {useThemeContext} from "../contexts/Theme";
 import {useSignerContext} from "../contexts/Signer";
 
-const Navbar = ({seed, isSidebarOpen}) => {
+const Navbar = ({isSidebarOpen}) => {
     const {theme} = useThemeContext();
     const {signer} = useSignerContext();
 
     return (
         <nav
-            className={`sticky top-0 z-20 flex w-full items-center justify-end space-x-3 bg-gradient-to-t from-transparent to-white py-3 px-4 backdrop-blur-sm transition duration-200 ease-in-out lg:space-x-5 lg:px-6 ${
+            className={`sticky top-0 z-20 flex w-full items-center justify-end space-x-3 bg-transparent py-5 px-4 backdrop-blur-sm transition duration-200 ease-in-out lg:space-x-5 lg:px-6 ${
                 isSidebarOpen ? "opacity-80" : "opacity-100"
             }`}>
             <div

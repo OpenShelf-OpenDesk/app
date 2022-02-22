@@ -13,7 +13,7 @@ function callContract(signer, functionToCall) {
 
 export async function makeOffer(signer, bookAddress, copyUid, offerPrice) {
     callContract(signer, async contract => {
-        const transaction = contract.makeOffer(bookAddress, copyUid, offerPrice);
+        const transaction = await contract.makeOffer(bookAddress, copyUid, offerPrice);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -21,7 +21,7 @@ export async function makeOffer(signer, bookAddress, copyUid, offerPrice) {
 
 export async function cancelOffer(signer, bookAddress, copyUid) {
     callContract(signer, async contract => {
-        const transaction = contract.cancelOffer(bookAddress, copyUid);
+        const transaction = await contract.cancelOffer(bookAddress, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -29,7 +29,7 @@ export async function cancelOffer(signer, bookAddress, copyUid) {
 
 export async function offerAccepted(signer, bookAddress, copyUid, buyer) {
     callContract(signer, async contract => {
-        const transaction = contract.offerAccepted(bookAddress, copyUid, buyer);
+        const transaction = await contract.offerAccepted(bookAddress, copyUid, buyer);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });

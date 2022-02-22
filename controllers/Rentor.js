@@ -13,7 +13,7 @@ function callContract(signer, functionToCall) {
 
 export async function putOnRent(signer, bookAddress, copyUid, flowRate) {
     callContract(signer, async contract => {
-        const transaction = contract.putOnRent(bookAddress, copyUid, flowRate);
+        const transaction = await contract.putOnRent(bookAddress, copyUid, flowRate);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -21,7 +21,7 @@ export async function putOnRent(signer, bookAddress, copyUid, flowRate) {
 
 export async function removeFromRent(signer, bookAddress, copyUid) {
     callContract(signer, async contract => {
-        const transaction = contract.removeFromRent(bookAddress, copyUid);
+        const transaction = await contract.removeFromRent(bookAddress, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -29,7 +29,7 @@ export async function removeFromRent(signer, bookAddress, copyUid) {
 
 export async function takeOnRent(signer, bookAddress, copyUid) {
     callContract(signer, async contract => {
-        const transaction = contract.takeOnRent(bookAddress, copyUid);
+        const transaction = await contract.takeOnRent(bookAddress, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -37,7 +37,7 @@ export async function takeOnRent(signer, bookAddress, copyUid) {
 
 export async function returnBook(signer, bookAddress, copyUid) {
     callContract(signer, async contract => {
-        const transaction = contract.returnBook(bookAddress, copyUid);
+        const transaction = await contract.returnBook(bookAddress, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -45,13 +45,13 @@ export async function returnBook(signer, bookAddress, copyUid) {
 
 export async function uri(signer, bookAddress, copyUid) {
     return callContract(signer, async contract => {
-        return contract.uri(bookAddress, copyUid);
+        return await contract.uri(bookAddress, copyUid);
     });
 }
 
 export async function addToWaitingList(signer, bookAddress, copyUid) {
     callContract(signer, async contract => {
-        const transaction = contract.addToWaitingList(bookAddress, copyUid);
+        const transaction = await contract.addToWaitingList(bookAddress, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -59,7 +59,7 @@ export async function addToWaitingList(signer, bookAddress, copyUid) {
 
 export async function removeFromWaitingList(signer, bookAddress, copyUid) {
     callContract(signer, async contract => {
-        const transaction = contract.removeFromWaitingList(bookAddress, copyUid);
+        const transaction = await contract.removeFromWaitingList(bookAddress, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });

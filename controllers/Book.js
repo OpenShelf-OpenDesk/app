@@ -15,7 +15,7 @@ function callContract(signer, bookAddress, functionToCall) {
 
 export async function buy(signer, bookAddress) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.buy();
+        const transaction = await contract.buy();
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -23,7 +23,7 @@ export async function buy(signer, bookAddress) {
 
 export async function transfer(signer, bookAddress, to, copyUid) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.transfer(to, copyUid);
+        const transaction = await contract.transfer(to, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -31,13 +31,13 @@ export async function transfer(signer, bookAddress, to, copyUid) {
 
 export async function uri(signer, bookAddress, copyUid) {
     return callContract(signer, bookAddress, async contract => {
-        return contract.uri(copyUid);
+        return await contract.uri(copyUid);
     });
 }
 
 export async function redeem(signer, bookAddress, voucher) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.redeem(voucher);
+        const transaction = await contract.redeem(voucher);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -45,13 +45,13 @@ export async function redeem(signer, bookAddress, voucher) {
 
 export async function verifyOwnership(signer, bookAddress, owner, copyUid, distributed) {
     return callContract(signer, bookAddress, async contract => {
-        return contract.verifyOwnership(owner, copyUid, distributed);
+        return await contract.verifyOwnership(owner, copyUid, distributed);
     });
 }
 
 export async function lockWith(signer, bookAddress, to, copyUid) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.lockWith(to, copyUid);
+        const transaction = await contract.lockWith(to, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -59,7 +59,7 @@ export async function lockWith(signer, bookAddress, to, copyUid) {
 
 export async function updateSellingPrice(signer, bookAddress, copyUid, newSellingPrice) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.updateSellingPrice(
+        const transaction = await contract.updateSellingPrice(
             copyUid,
             ethers.utils.parseUnits(newSellingPrice.toString(), "ether")
         );
@@ -70,7 +70,7 @@ export async function updateSellingPrice(signer, bookAddress, copyUid, newSellin
 
 // export async function unlock(signer, bookAddress, copyUid) {
 //     return callContract(signer, bookAddress, async contract => {
-//         const transaction = contract.unlock(copyUid);
+//         const transaction = await contract.unlock(copyUid);
 //         const transactionStatus = await transaction.wait();
 //         console.log(transactionStatus);
 //     });
@@ -78,24 +78,24 @@ export async function updateSellingPrice(signer, bookAddress, copyUid, newSellin
 
 export async function verifyLockedWith(signer, bookAddress, to, copyUid) {
     return callContract(signer, bookAddress, async contract => {
-        return contract.verifyLockedWith(to, copyUid);
+        return await contract.verifyLockedWith(to, copyUid);
     });
 }
 export async function getPreviousOwner(signer, bookAddress, copyUid) {
     return callContract(signer, bookAddress, async contract => {
-        return contract.getPreviousOwner(copyUid);
+        return await contract.getPreviousOwner(copyUid);
     });
 }
 export async function getChainID(signer, bookAddress) {
     return callContract(signer, bookAddress, async contract => {
-        return contract.getChainID();
+        return await contract.getChainID();
     });
 }
 
 //  Only Publisher --------------------------------------------------
 export async function updatePrice(signer, bookAddress, newPrice) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.updatePrice(
+        const transaction = await contract.updatePrice(
             ethers.utils.parseUnits(newPrice.toString(), "ether")
         );
         const transactionStatus = await transaction.wait();
@@ -105,7 +105,7 @@ export async function updatePrice(signer, bookAddress, newPrice) {
 
 export async function increaseMarketSupply(signer, bookAddress, incrementSupplyBy) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.increaseMarketSupply(incrementSupplyBy);
+        const transaction = await contract.increaseMarketSupply(incrementSupplyBy);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -113,7 +113,7 @@ export async function increaseMarketSupply(signer, bookAddress, incrementSupplyB
 
 export async function delimitSupply(signer, bookAddress) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.delimitSupply();
+        const transaction = await contract.delimitSupply();
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -121,7 +121,7 @@ export async function delimitSupply(signer, bookAddress) {
 
 export async function limitSupply(signer, bookAddress) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.limitSupply(to, copyUid);
+        const transaction = await contract.limitSupply(to, copyUid);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -129,7 +129,7 @@ export async function limitSupply(signer, bookAddress) {
 
 export async function updateRoyalty(signer, bookAddress, newRoyalty) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.updateRoyalty(
+        const transaction = await contract.updateRoyalty(
             ethers.utils.parseUnits(newRoyalty.toString(), "ether")
         );
         const transactionStatus = await transaction.wait();
@@ -139,9 +139,7 @@ export async function updateRoyalty(signer, bookAddress, newRoyalty) {
 
 export async function updateCoverPageUri(signer, bookAddress, newCoverPageUri) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.updateCoverPageUri(
-            ethers.utils.formatBytes32String(newCoverPageUri)
-        );
+        const transaction = await contract.updateCoverPageUri(newCoverPageUri);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -149,13 +147,13 @@ export async function updateCoverPageUri(signer, bookAddress, newCoverPageUri) {
 
 export async function getWithdrawableRevenue(signer, bookAddress) {
     return callContract(signer, bookAddress, async contract => {
-        return contract.getWithdrawableRevenue();
+        return await contract.getWithdrawableRevenue();
     });
 }
 
 export async function addContributor(signer, bookAddress, newContributor) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.addContributor(newContributor);
+        const transaction = await contract.addContributor(newContributor);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -163,7 +161,7 @@ export async function addContributor(signer, bookAddress, newContributor) {
 
 export async function removeContributor(signer, bookAddress, contributorAddress) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.removeContributor(contributorAddress);
+        const transaction = await contract.removeContributor(contributorAddress);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -171,7 +169,7 @@ export async function removeContributor(signer, bookAddress, contributorAddress)
 
 export async function updateContributorShares(signer, bookAddress, contributor, share) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.updateContributorShares(contributor, share);
+        const transaction = await contract.updateContributorShares(contributor, share);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -179,7 +177,7 @@ export async function updateContributorShares(signer, bookAddress, contributor, 
 
 export async function withdrawRevenue(signer, bookAddress) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = contract.withdrawRevenue();
+        const transaction = await contract.withdrawRevenue();
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });

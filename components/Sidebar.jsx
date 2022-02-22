@@ -10,11 +10,11 @@ const Sidebar = ({open, setOpen}) => {
     const {signer} = useSignerContext();
 
     return (
-        <section className={`fixed top-0 z-20 h-full w-full lg:w-1/4`}>
-            <div className={`relative z-40 flex h-full w-full items-center`}>
-                <div className="relative z-40 flex h-full w-[76px] items-center bg-white lg:w-24">
+        <section className={`fixed top-0 h-full w-full lg:w-1/4`}>
+            <div className={`flex h-full w-full items-center`}>
+                <div className="z-40 flex h-full w-[76px] items-center bg-white lg:w-24">
                     <MenuAlt2Icon
-                        className={`absolute inset-6 z-40 h-6 w-6 cursor-pointer transition duration-300 ease-in-out  lg:inset-7 lg:h-8 lg:w-8 ${
+                        className={`absolute inset-6 h-6 w-6 cursor-pointer transition duration-300 ease-in-out  lg:inset-7 lg:h-8 lg:w-8 ${
                             open ? "scale-0" : "scale-100"
                         } ${theme === "os" ? "os-icon" : "od-icon"}`}
                         onClick={() => {
@@ -22,14 +22,14 @@ const Sidebar = ({open, setOpen}) => {
                         }}
                     />
                     <XIcon
-                        className={`absolute inset-6 z-40 h-6 w-6 cursor-pointer transition duration-300 ease-in-out lg:inset-7 lg:h-8 lg:w-8 ${
+                        className={`absolute inset-6 h-6 w-6 cursor-pointer transition duration-300 ease-in-out lg:inset-7 lg:h-8 lg:w-8 ${
                             open ? "scale-100" : "scale-0"
                         } ${theme === "os" ? "os-icon" : "od-icon"}`}
                         onClick={() => {
                             setOpen(false);
                         }}
                     />
-                    <div className="absolute bottom-[30%] z-40 flex origin-top-left -rotate-90 items-center px-2 pt-5 lg:pt-7">
+                    <div className="absolute bottom-[30%] flex origin-top-left -rotate-90 items-center px-2 pt-5 lg:pt-7">
                         <div
                             className={`text-3xl font-semibold tracking-wider ${
                                 theme === "os" ? "text-os-500" : "text-od-500"
@@ -41,7 +41,7 @@ const Sidebar = ({open, setOpen}) => {
                 <div
                     className={`absolute z-10 ${
                         open ? "-left-[38px] lg:left-0" : "-left-full"
-                    } ml-[76px] flex h-full w-full flex-col items-center bg-white pt-12 shadow-2xl transition-all duration-300 ease-in-out lg:ml-24 lg:pt-20 ${
+                    } ml-[76px] flex h-full w-full transform-gpu flex-col items-center overflow-hidden bg-white pt-12 shadow-2xl transition-all duration-200 ease-in-out lg:ml-24 lg:pt-20 ${
                         theme === "os" ? "shadow-os-500/30" : "shadow-od-500/20"
                     }`}>
                     <div className="flex flex-col items-center justify-between space-y-3 py-12 px-8">
