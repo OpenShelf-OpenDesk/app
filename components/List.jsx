@@ -1,16 +1,16 @@
-import {Fragment} from "react";
-import {Listbox, Transition} from "@headlessui/react";
-import {CheckIcon, SelectorIcon} from "@heroicons/react/solid";
-import {useThemeContext} from "../contexts/Theme";
+import { Fragment } from "react";
+import { Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, SelectorIcon } from "@heroicons/react/solid";
+import { useThemeContext } from "../contexts/Theme";
 
-const List = ({selected, setSelected, options}) => {
-    const {theme} = useThemeContext();
+const List = ({ selected, setSelected, options }) => {
+    const { theme } = useThemeContext();
 
     return (
-        <div className="w-full">
+        <div className="w-full text-sm">
             <Listbox value={selected} onChange={setSelected}>
                 <div className="relative w-full">
-                    <Listbox.Button className="flex w-full flex-row justify-between gap-x-5 rounded border-2 border-gray-300 py-2 px-3 font-medium focus-within:border-blue-300 focus-within:shadow focus-within:shadow-blue-300/50 focus-within:outline-none focus-within:ring-0 hover:border-blue-300 hover:shadow hover:shadow-blue-300/50">
+                    <Listbox.Button className="flex w-full flex-row justify-between items-center gap-x-5 rounded border-2 border-gray-300 py-2 px-3 font-medium focus-within:border-blue-300 focus-within:shadow focus-within:shadow-blue-300/50 focus-within:outline-none focus-within:ring-0 hover:border-blue-300 hover:shadow hover:shadow-blue-300/50">
                         <span>{selected}</span>
                         <SelectorIcon className="h-5 w-5 text-gray-400" />
                     </Listbox.Button>
@@ -24,22 +24,19 @@ const List = ({selected, setSelected, options}) => {
                                 <Listbox.Option
                                     key={optionIdx}
                                     className={() =>
-                                        `group relative flex cursor-default select-none justify-start rounded py-2 pl-10 hover:text-white ${
-                                            theme === "os" ? "hover:bg-os-500" : "hover:bg-od-500"
+                                        `group relative flex cursor-default select-none justify-start rounded py-2 pl-10 hover:text-white ${theme === "os" ? "hover:bg-os-500" : "hover:bg-od-500"
                                         }`
                                     }
                                     value={option}>
-                                    {({selected}) => (
+                                    {({ selected }) => (
                                         <>
                                             <span
-                                                className={`${
-                                                    selected ? "font-semibold" : "font-normal"
-                                                } group-hover:font-semibold`}>
+                                                className={`${selected ? "font-semibold" : "font-normal"
+                                                    } group-hover:font-semibold`}>
                                                 {selected && (
                                                     <CheckIcon
-                                                        className={`absolute left-3 h-5 w-5 ${
-                                                            theme === "os" ? "os-icon" : "od-icon"
-                                                        } group-hover:text-white`}
+                                                        className={`absolute left-3 h-5 w-5 ${theme === "os" ? "os-icon" : "od-icon"
+                                                            } group-hover:text-white`}
                                                     />
                                                 )}
                                                 {option}

@@ -80,11 +80,11 @@ export async function publish(signer, bookDetails, cb) {
         title: bookDetails.title,
         subTitle: bookDetails.subTitle,
         description: bookDetails.description,
-        language: "en",
+        language: bookDetails.language,
         currency: bookDetails.currency,
         genres: bookDetails.genres,
-        keywords: ["test"],
-        copyrights: "Copyrights"
+        keywords: bookDetails.keywords,
+        copyrights: bookDetails.copyrights
     };
     cb(4);
     const metadataUri = await uploadBookMetadata(bookMetaData);

@@ -3,13 +3,21 @@ import Image from "next/image";
 import {useThemeContext} from "../../contexts/Theme";
 import {useEffect} from "react";
 import {useRouter} from "next/router";
+import {useLoadingContext} from "../../contexts/Loading";
 
 const Home = () => {
     const {theme, setTheme} = useThemeContext();
+    const {setLoading} = useLoadingContext();
+
     const router = useRouter();
 
     useEffect(() => {
         setTheme("od");
+        setLoading(false);
+
+        return () => {
+            setLoading(true);
+        };
     }, []);
 
     return (
@@ -33,8 +41,6 @@ const Home = () => {
                             Welcome to the realm of digital books
                         </p>
                         <p className="text-base lg:text-lg">
-                            Here, you find books not just from the bestselling authors, but from
-                            people who have within a writer and dreams to move lives of people.
                             Here, you find books not just from the bestselling authors, but from
                             people who have within a writer and dreams to move lives of people.
                         </p>

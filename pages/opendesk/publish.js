@@ -4,25 +4,29 @@ import {
     DocumentRemoveIcon,
     ExclamationCircleIcon
 } from "@heroicons/react/solid";
-import { useState } from "react";
+import {useState, useEffect} from "react";
 import ChipInputField from "../../components/ChipInputField";
 import PreviewBook from "../../components/PreviewBook";
-import { publish } from "../../controllers/Publisher";
-import { useSignerContext } from "../../contexts/Signer";
-import { useRouter } from "next/router";
+import {publish} from "../../controllers/Publisher";
+import {useSignerContext} from "../../contexts/Signer";
+import {useRouter} from "next/router";
 import ProgressStatus from "../../components/ProgressStatus";
+import List from "../../components/List";
+import {useThemeContext} from "../../contexts/Theme";
+import {useLoadingContext} from "../../contexts/Loading";
 
 const Publish = () => {
-    const { signer } = useSignerContext();
-    const router = useRouter();
-    const [req, setReq] = useState(false);
-    const [supplyLimited, setSupplyLimited] = useState(false);
-    const [genres, setGenres] = useState([]);
-    const [selectedBookFile, setSelectedBookFile] = useState();
-    const [selectedBookLocalURL, setSelectedBookLocalURL] = useState("");
-    const [progressStatus, setProgressStatus] = useState(0);
-    const [validSubmitAttempt, setValidSubmitAttempt] = useState(false);
-    const [invalidSubmitAttempt, setInvalidSubmitAttempt] = useState(false);
+    const {setTheme} = useThemeContext();
+    const {setLoading} = useLoadingContext();
+
+    useEffect(() => {
+        setTheme("od");
+        setLoading(false);
+
+        return () => {
+            setLoading(true);
+        };
+    }, []);
 
     const statusTags = [
         "Uploading e-book file",
@@ -32,6 +36,35 @@ const Publish = () => {
         "Transaction Request Initiated",
         "Transaction Successful"
     ];
+
+    const languageOptions = [
+        "English",
+        "Hindi",
+        "French",
+        "Spanish",
+        "German",
+        "Russian",
+        "Chinese",
+        "Japanese",
+        "Korean",
+        "Dutch",
+        "Portuguese",
+        "Italian",
+        "Other"
+    ];
+
+    const {signer} = useSignerContext();
+    const router = useRouter();
+    const [req, setReq] = useState(false);
+    const [supplyLimited, setSupplyLimited] = useState(false);
+    const [genres, setGenres] = useState([]);
+    const [keywords, setKeywords] = useState([]);
+    const [selectedLanguageOption, setSelectedLanguageOption] = useState(languageOptions[0]);
+    const [selectedBookFile, setSelectedBookFile] = useState();
+    const [selectedBookLocalURL, setSelectedBookLocalURL] = useState("");
+    const [progressStatus, setProgressStatus] = useState(0);
+    const [validSubmitAttempt, setValidSubmitAttempt] = useState(false);
+    const [invalidSubmitAttempt, setInvalidSubmitAttempt] = useState(false);
 
     const setProgressStatusCB = statusCode => {
         setProgressStatus(statusCode);
@@ -49,16 +82,19 @@ const Publish = () => {
                 royalty: e.target.royalty.value,
                 currency: "MATIC",
                 genres: genres,
+                keywords: keywords,
+                copyrights: e.target.copyrights.value,
+                language: selectedLanguageOption,
                 edition: e.target.edition.value ? e.target.edition.value : 0,
                 prequel: e.target.prequel.value ? e.target.prequel.value : 0,
                 supplyLimited: supplyLimited,
                 pricedBookSupplyLimit: supplyLimited ? e.target.pricedBookSupplyLimit.value : 0,
                 file: selectedBookFile
             };
-            // await publish(signer.signer, newBook, setProgressStatusCB);
-            // setTimeout(() => {
-            //     router.push(`/opendesk`);
-            // }, 1000);
+            await publish(signer.signer, newBook, setProgressStatusCB);
+            setTimeout(() => {
+                router.push(`/opendesk`);
+            }, 1000);
             console.log(newBook);
         } else {
             setInvalidSubmitAttempt(true);
@@ -80,9 +116,9 @@ const Publish = () => {
                     />
                 </div>
                 <form
-                    className="grid h-full w-full grid-cols-2 gap-20 px-32 py-10 accent-od-400"
+                    className="no-scrollbar grid h-full w-full grid-cols-2 gap-20 overflow-scroll px-32 py-12 accent-od-400"
                     onSubmit={handleSubmit}>
-                    <div className="m-auto h-full max-w-full overflow-scroll rounded border-2 border-od-400 shadow-lg">
+                    <div className="m-auto h-full max-w-full overflow-scroll rounded border-2 border-od-400 shadow-lg shadow-od-300/50">
                         {selectedBookFile ? (
                             <>
                                 <div
@@ -143,7 +179,7 @@ const Publish = () => {
                             </>
                         )}
                     </div>
-                    <div className="flex w-full flex-col justify-center space-y-4 px-10">
+                    <div className="flex w-full flex-col justify-center space-y-2.5 px-10">
                         <div className="mx-auto text-2xl font-semibold tracking-wide text-od-500">
                             Enter Book Details
                         </div>
@@ -152,6 +188,7 @@ const Publish = () => {
                                 name="title"
                                 type="text"
                                 placeholder="Title"
+                                title="Enter title of the book."
                                 className="input-text peer"
                                 autoComplete="off"
                                 required={req}
@@ -163,6 +200,7 @@ const Publish = () => {
                                 name="subtitle"
                                 type="text"
                                 placeholder="Sub-title"
+                                title="Enter subtitle of the book."
                                 className="input-text peer"
                                 autoComplete="off"
                                 required={req}
@@ -174,19 +212,52 @@ const Publish = () => {
                                 name="description"
                                 type="text"
                                 placeholder="Description"
-                                className="input-text peer h-36"
+                                title="Enter description of the book."
+                                className="input-text peer h-24"
                                 autoComplete="off"
                                 required={req}
                             />
                             <span className="peer-input-text">{"|"}</span>
                         </div>
-                        <ChipInputField chips={genres} setChips={setGenres} placeholder={"Genre"} />
-                        <div className="flex w-full flex-row space-x-5">
-                            <div className="flex flex-1 flex-col-reverse">
+                        <div
+                            className="flex flex-col-reverse"
+                            title="Enter genres (separated by comma) of the book">
+                            <ChipInputField
+                                chips={genres}
+                                setChips={setGenres}
+                                placeholder={"Genre"}
+                            />
+                            <span className="peer-input-text">{"|"}</span>
+                        </div>
+                        <div
+                            className="flex flex-col-reverse"
+                            title="Enter keywords (separated by comma) for the book.">
+                            <ChipInputField
+                                chips={keywords}
+                                setChips={setKeywords}
+                                placeholder={"Keywords"}
+                            />
+                            <span className="peer-input-text">{"|"}</span>
+                        </div>
+                        <div className="flex flex-col-reverse">
+                            <textarea
+                                name="copyrights"
+                                placeholder="Copyrights"
+                                title="Enter copyrights for the book."
+                                className="input-text peer"
+                                autoComplete="off"
+                                value={`Copyright © ${new Date().getFullYear()}`}
+                                required={req}
+                            />
+                            <span className="peer-input-text">{"|"}</span>
+                        </div>
+                        <div className="flex w-full flex-row space-x-2">
+                            <div className="flex w-full flex-col-reverse">
                                 <input
                                     name="edition"
                                     type="number"
                                     placeholder="Edition"
+                                    title="Enter the Book ID of previous Edition."
                                     className="input-text peer"
                                     autoComplete="off"
                                     step="1"
@@ -194,11 +265,12 @@ const Publish = () => {
                                 />
                                 <span className="peer-input-text">{"|"}</span>
                             </div>
-                            <div className="flex flex-1 flex-col-reverse">
+                            <div className="flex w-full flex-col-reverse">
                                 <input
                                     name="prequel"
                                     type="number"
                                     placeholder="Prequel"
+                                    title="Enter the Book ID of the prequel."
                                     className="input-text peer"
                                     autoComplete="off"
                                     step="1"
@@ -206,14 +278,25 @@ const Publish = () => {
                                 />
                                 <span className="peer-input-text">{"|"}</span>
                             </div>
+                            <div
+                                className="flex w-full flex-col-reverse"
+                                title="Select language of the book.">
+                                <List
+                                    selected={selectedLanguageOption}
+                                    setSelected={setSelectedLanguageOption}
+                                    options={languageOptions}
+                                />
+                                <span className="peer-input-text">{"|"}</span>
+                            </div>
                         </div>
-                        <div className="flex w-full flex-row space-x-1">
-                            <div className="flex flex-1 flex-col-reverse">
+                        <div className="flex w-full flex-row space-x-2">
+                            <div className="flex w-full flex-col-reverse">
                                 <input
                                     name="price"
                                     type="number"
                                     placeholder="Price"
-                                    className="input-text peer"
+                                    className="input-text peer font-semibold"
+                                    title="Enter launch Price of the book."
                                     autoComplete="off"
                                     step="any"
                                     min="0"
@@ -221,26 +304,13 @@ const Publish = () => {
                                 />
                                 <span className="peer-input-text">{"|"}</span>
                             </div>
-                            <div className="flex flex-col-reverse">
-                                <input
-                                    name="currency"
-                                    type="text"
-                                    placeholder="Currency"
-                                    className="input-text peer text-center font-semibold uppercase"
-                                    value="Matic"
-                                    autoComplete="off"
-                                    disabled
-                                />
-                                <span className="peer-input-text">{"|"}</span>
-                            </div>
-                        </div>
-                        <div className="flex w-full flex-row space-x-1">
-                            <div className="flex flex-1 flex-col-reverse">
+                            <div className="flex w-full flex-col-reverse">
                                 <input
                                     name="royalty"
                                     type="number"
                                     placeholder="Royalty"
-                                    className="input-text peer"
+                                    className="input-text peer font-semibold"
+                                    title="Enter royalty for the book."
                                     autoComplete="off"
                                     step="any"
                                     min="0"
@@ -248,7 +318,7 @@ const Publish = () => {
                                 />
                                 <span className="peer-input-text">{"|"}</span>
                             </div>
-                            <div className="flex flex-col-reverse">
+                            <div className="flex w-1/5 flex-col-reverse">
                                 <input
                                     name="currency"
                                     type="text"
@@ -267,6 +337,7 @@ const Publish = () => {
                                     id="supplyLimited"
                                     name="supplyLimited"
                                     type="checkbox"
+                                    title="Check to limit supply."
                                     className="text-lg"
                                     onChange={() => {
                                         setSupplyLimited(state => !state);
@@ -280,6 +351,7 @@ const Publish = () => {
                                     type="number"
                                     placeholder="Book Supply Limit"
                                     className="input-text peer w-full"
+                                    title="Enter supply limit of the book."
                                     autoComplete="off"
                                     step="1"
                                     min="0"
@@ -289,14 +361,16 @@ const Publish = () => {
                                 <span className="peer-input-text">{"|"}</span>
                             </div>
                         </div>
-                        <button
-                            className="button-od"
-                            type="Submit"
-                            onClick={() => {
-                                setReq(true);
-                            }}>
-                            Publish
-                        </button>
+                        <div className="w-full pt-3">
+                            <button
+                                className="button-od w-full"
+                                type="Submit"
+                                onClick={() => {
+                                    setReq(true);
+                                }}>
+                                Publish
+                            </button>
+                        </div>
                     </div>
                 </form>
             </section>
