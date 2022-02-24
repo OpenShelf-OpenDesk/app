@@ -3,11 +3,9 @@ import Identicon from "./Identicon";
 import {DuplicateIcon as DuplicateIconSolid, XIcon, MenuAlt2Icon} from "@heroicons/react/solid";
 import {DuplicateIcon as DuplicateIconOutline} from "@heroicons/react/outline";
 import {useThemeContext} from "../contexts/Theme";
-import {useSignerContext} from "../contexts/Signer";
 
-const Sidebar = ({open, setOpen}) => {
+const Sidebar = ({open, setOpen, signer}) => {
     const {theme} = useThemeContext();
-    const {signer} = useSignerContext();
 
     return (
         <section className={`fixed top-0 h-full w-full lg:w-1/4`}>
@@ -52,7 +50,7 @@ const Sidebar = ({open, setOpen}) => {
                         />
                         <div
                             className={`group relative flex cursor-pointer items-center justify-between gap-x-2 font-semibold text-gray-700 ${
-                                theme === "os" ? "hover:text-os-500" : "hover:text-od-500"
+                                theme === "os" ? "hover:text-os-600" : "hover:text-od-600"
                             }`}>
                             <span className="mr-6 font-medium tracking-wider lg:mr-8">
                                 {signer.address.substring(0, 8)}.....

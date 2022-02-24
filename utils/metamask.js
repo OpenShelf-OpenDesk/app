@@ -8,12 +8,12 @@ export async function connectToWallet(networkUpdated, signerUpdated) {
 
     connection.on("accountsChanged", async accounts => {
         console.log("accountsChanged");
-        if ((await provider.listAccounts()).length > 0) {
+        if (accounts.length > 0) {
             const signer = provider.getSigner();
             const address = await signer.getAddress();
             signerUpdated(signer, address);
         } else {
-            signerUpdated(null, null);
+            signerUpdated(undefined, "0x0000000000000000000000000000000000000000");
         }
     });
 
@@ -37,6 +37,8 @@ export async function connectToWallet(networkUpdated, signerUpdated) {
     connection.on("disconnect", error => {
         console.log("disconnect");
         console.log(error);
+        networkUpdated(null);
+        signerUpdated(undefined, "0x0000000000000000000000000000000000000000");
     });
 
     if ((await provider.listAccounts()).length > 0) {
@@ -47,4 +49,5 @@ export async function connectToWallet(networkUpdated, signerUpdated) {
         const network = await provider.getNetwork();
         networkUpdated(network);
     }
+    return provider;
 }

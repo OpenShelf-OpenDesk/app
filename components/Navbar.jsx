@@ -13,11 +13,9 @@ import {
     BellIcon as BellIconOutline
 } from "@heroicons/react/outline";
 import {useThemeContext} from "../contexts/Theme";
-import {useSignerContext} from "../contexts/Signer";
 
-const Navbar = ({isSidebarOpen}) => {
+const Navbar = ({isSidebarOpen, signer}) => {
     const {theme} = useThemeContext();
-    const {signer} = useSignerContext();
 
     return (
         <nav

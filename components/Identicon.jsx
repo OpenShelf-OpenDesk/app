@@ -2,7 +2,7 @@ import React from "react";
 import Blockies from "react-blockies";
 import {useThemeContext} from "../contexts/Theme";
 
-const Identicon = ({seed, scale, className}) => {
+const Identicon = ({seed = "0x0000000000000000000000000000000000000000", scale, className}) => {
     const {theme} = useThemeContext();
     return (
         <div>
