@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {useThemeContext} from "../contexts/Theme";
 import {useSignerContext} from "../contexts/Signer";
 
@@ -9,6 +9,8 @@ const Layout = ({title, children}) => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
     const {theme} = useThemeContext();
     const {signer} = useSignerContext();
+
+    useEffect(() => {}, [signer]);
 
     return (
         <div className="relative">

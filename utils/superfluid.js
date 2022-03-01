@@ -1,8 +1,11 @@
 import {Framework} from "@superfluid-finance/sdk-core";
 import addresses from "../contracts/addresses.json";
-import {network} from "../superfluid_config.json";
+import sfConfig from "../superfluid_config.json";
+import {ethers} from "ethers";
 
+const network = sfConfig.network;
 let MATICx;
+
 const sfLogo =
     "      |||||||||||||||||||||\n      |||||||||||||||||||||\n      ||||||||         ||||\n      ||||||||         ||||\n      |||||||||||||    ||||\n      |||||||||||||    ||||\n      ||||    |||||||||||||\n      ||||    |||||||||||||\n      |||||||||||||||||||||\n      |||||||||||||||||||||\n      ";
 
@@ -13,7 +16,7 @@ export async function initializeSF(web3ModalProvider) {
     });
     console.log(`%c\n\n${sfLogo}\nSuperfluid Framework Initialized`, "font-weight: 900;");
     console.log(web3ModalSf);
-    MATICx = web3ModalSf.loadSuperToken(network.polytest.acceptedToken);
+    MATICx = await web3ModalSf.loadSuperToken(network.polytest.acceptedToken);
     return web3ModalSf;
 }
 
@@ -35,12 +38,13 @@ export async function subscribe(sf, signer, flowRate) {
         const createFlowOperation = sf.cfaV1.createFlow({
             flowRate: flowRate,
             receiver: addresses.rentor,
-            superToken: MATICx
+            superToken: network.polytest.acceptedToken
         });
 
         console.log("Creating your subscription.");
 
-        const result = await createFlowOperation.exec(signer.signer);
+        const tx = await createFlowOperation.exec(signer.signer);
+        const result = await tx.wait();
         console.log(result);
 
         console.log(
@@ -68,12 +72,13 @@ export async function updateSubscription(sf, signer, newFlowRate) {
         const updateFlowOperation = sf.cfaV1.updateFlow({
             flowRate: newFlowRate,
             receiver: addresses.rentor,
-            superToken: MATICx
+            superToken: network.polytest.acceptedToken
         });
 
         console.log("Updating your subscription.");
 
-        const result = await updateFlowOperation.exec(signer.signer);
+        const tx = await updateFlowOperation.exec(signer.signer);
+        const result = await tx.wait();
         console.log(result);
 
         console.log(
@@ -98,16 +103,17 @@ export async function unsubscribe(sf, signer) {
         const deleteFlowOperation = sf.cfaV1.deleteFlow({
             sender: signer.address,
             receiver: addresses.rentor,
-            superToken: MATICx
+            superToken: network.polytest.acceptedToken
         });
 
         console.log("Ending you subscription.");
 
-        const result = await deleteFlowOperation.exec(signer.signer);
+        const tx = await deleteFlowOperation.exec(signer.signer);
+        const result = await tx.wait();
         console.log(result);
 
         console.log(
-            `%You've just unsubscribed for renting books!\n
+            `%cYou've just unsubscribed for renting books!\n
         View your stream At: https://app.superfluid.finance/dashboard/${addresses.rentor}\n
         Network: Matic Mumbai Testnet\n
         Super Token: MATICx\n
@@ -124,12 +130,12 @@ export async function unsubscribe(sf, signer) {
 
 export async function getSuperTokenBalance(signer) {
     return await MATICx.balanceOf({
-        account: string,
-        providerOrSigner: signer
+        account: signer.address,
+        providerOrSigner: signer.signer
     }).then(balance => {
-        return balance;
+        return Number(weiToEther(balance)).toPrecision(3);
     });
-} //calculate date of empty
+}
 
 export async function wrap(sf, signer, amount) {
     const MATIC = new ethers.Contract(
@@ -170,14 +176,33 @@ export async function wrap(sf, signer, amount) {
 // export async function unWrap(sf, signer, amount) {}
 
 // flow balance (from contract/ to contract)
-export async function getFlowBalance(sf) {
-    return await sf.query
+export async function getFlowBalance(sf, sender) {
+    const outFlow = await sf.query
         .listStreams({
-            sender: string.address,
+            sender: sender,
             receiver: addresses.rentor,
             token: network.polytest.acceptedToken
         })
         .then(result => {
-            return result;
+            console.log(result.data);
+            return result.data[0].currentFlowRate;
         });
+    const inFlow = await sf.query
+        .listStreams({
+            sender: addresses.rentor,
+            receiver: sender,
+            token: network.polytest.acceptedToken
+        })
+        .then(result => {
+            console.log(result.data);
+            return result.data[0].currentFlowRate;
+        });
+    return [
+        Number(weiToEther(inFlow) * 2592000).toPrecision(3),
+        Number(weiToEther(outFlow) * 2592000).toPrecision(3)
+    ];
+}
+
+function weiToEther(x) {
+    return ethers.utils.formatUnits(x, "ether");
 }

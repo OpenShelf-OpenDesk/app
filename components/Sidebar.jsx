@@ -3,6 +3,7 @@ import Identicon from "./Identicon";
 import {DuplicateIcon as DuplicateIconSolid, XIcon, MenuAlt2Icon} from "@heroicons/react/solid";
 import {DuplicateIcon as DuplicateIconOutline} from "@heroicons/react/outline";
 import {useThemeContext} from "../contexts/Theme";
+import RentController from "./RentController";
 
 const Sidebar = ({open, setOpen, signer}) => {
     const {theme} = useThemeContext();
@@ -39,7 +40,7 @@ const Sidebar = ({open, setOpen, signer}) => {
                 <div
                     className={`absolute z-10 ${
                         open ? "-left-[38px] lg:left-0" : "-left-full"
-                    } ml-[76px] flex h-full w-full transform-gpu flex-col items-center overflow-hidden bg-white pt-12 shadow-2xl transition-all duration-200 ease-in-out lg:ml-24 lg:pt-20 ${
+                    } ml-[76px] flex h-full w-full transform-gpu flex-col items-center overflow-hidden bg-white pt-12 shadow-2xl transition-all duration-200 ease-in-out lg:ml-24 lg:pt-10 ${
                         theme === "os" ? "shadow-os-500/30" : "shadow-od-500/20"
                     }`}>
                     <div className="flex flex-col items-center justify-between space-y-3 py-12 px-8">
@@ -67,7 +68,9 @@ const Sidebar = ({open, setOpen, signer}) => {
                                 }`}
                             />
                         </div>
-                        <div></div>
+                    </div>
+                    <div className="h-full w-full">
+                        <RentController />
                     </div>
                 </div>
             </div>

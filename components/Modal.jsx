@@ -28,7 +28,7 @@ const Modal = ({
                 className={`fixed inset-0 z-[90] overflow-y-auto transition duration-200 ease-in-out ${
                     isOpen ? "backdrop-blur-md" : "backdrop-blur-none"
                 }`}
-                onClose={closeModal}>
+                onClose={() => {}}>
                 <div className="min-h-screen px-4 text-center">
                     <Transition.Child
                         as={Fragment}
