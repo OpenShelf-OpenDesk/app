@@ -1,9 +1,6 @@
 import {ethers} from "ethers";
 import Book from "../contracts/abis/Book.json";
 
-// const provider = ethers.providers.JsonRpcBatchProvider(window.ethereum);
-// const provider = ethers.providers.Web3Provider(window.ethereum);
-
 function callContract(signer, bookAddress, functionToCall) {
     const contract = new ethers.Contract(bookAddress, Book.abi, signer);
     try {
@@ -68,6 +65,7 @@ export async function updateSellingPrice(signer, bookAddress, copyUid, newSellin
     });
 }
 
+// called only by Rentor Contract Address
 // export async function unlock(signer, bookAddress, copyUid) {
 //     return callContract(signer, bookAddress, async contract => {
 //         const transaction = await contract.unlock(copyUid);
@@ -121,7 +119,7 @@ export async function delimitSupply(signer, bookAddress) {
 
 export async function limitSupply(signer, bookAddress) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = await contract.limitSupply(to, copyUid);
+        const transaction = await contract.limitSupply();
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -137,39 +135,16 @@ export async function updateRoyalty(signer, bookAddress, newRoyalty) {
     });
 }
 
-export async function updateCoverPageUri(signer, bookAddress, newCoverPageUri) {
-    callContract(signer, bookAddress, async contract => {
-        const transaction = await contract.updateCoverPageUri(newCoverPageUri);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
-}
-
 export async function getWithdrawableRevenue(signer, bookAddress) {
     return callContract(signer, bookAddress, async contract => {
         return await contract.getWithdrawableRevenue();
     });
 }
 
-export async function addContributor(signer, bookAddress, newContributor) {
+// newContributors[] = Contributor{address,share}[]
+export async function addContributor(signer, bookAddress, newContributors, role) {
     callContract(signer, bookAddress, async contract => {
-        const transaction = await contract.addContributor(newContributor);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
-}
-
-export async function removeContributor(signer, bookAddress, contributorAddress) {
-    callContract(signer, bookAddress, async contract => {
-        const transaction = await contract.removeContributor(contributorAddress);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
-}
-
-export async function updateContributorShares(signer, bookAddress, contributor, share) {
-    callContract(signer, bookAddress, async contract => {
-        const transaction = await contract.updateContributorShares(contributor, share);
+        const transaction = await contract.addContributor(newContributors, role);
         const transactionStatus = await transaction.wait();
         console.log(transactionStatus);
     });
@@ -186,8 +161,3 @@ export async function withdrawRevenue(signer, bookAddress) {
 export function contractAbi() {
     return Book.abi;
 }
-
-// export async function upgrade(signer, bookAddress, newImplementation) {}
-
-// TODO
-// On remove contributors, add to previously contributed in subgraph

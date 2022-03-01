@@ -49,21 +49,21 @@ export async function uri(signer, bookAddress, copyUid) {
     });
 }
 
-export async function addToWaitingList(signer, bookAddress, copyUid) {
-    callContract(signer, async contract => {
-        const transaction = await contract.addToWaitingList(bookAddress, copyUid);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
-}
+// export async function addToWaitingList(signer, bookAddress, copyUid) {
+//     callContract(signer, async contract => {
+//         const transaction = await contract.addToWaitingList(bookAddress, copyUid);
+//         const transactionStatus = await transaction.wait();
+//         console.log(transactionStatus);
+//     });
+// }
 
-export async function removeFromWaitingList(signer, bookAddress, copyUid) {
-    callContract(signer, async contract => {
-        const transaction = await contract.removeFromWaitingList(bookAddress, copyUid);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
-}
+// export async function removeFromWaitingList(signer, bookAddress, copyUid) {
+//     callContract(signer, async contract => {
+//         const transaction = await contract.removeFromWaitingList(bookAddress, copyUid);
+//         const transactionStatus = await transaction.wait();
+//         console.log(transactionStatus);
+//     });
+// }
 
 export function contractAbi() {
     return Rentor.abi;

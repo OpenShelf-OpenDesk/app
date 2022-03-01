@@ -31,7 +31,6 @@ const Publish = () => {
     const statusTags = [
         "Uploading e-book file",
         "Extracting Cover Page",
-        "Uploading Cover Page",
         "Uploading Book MetaData",
         "Transaction Request Initiated",
         "Transaction Successful"
