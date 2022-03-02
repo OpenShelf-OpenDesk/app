@@ -45,7 +45,6 @@ export async function subscribe(sf, signer, flowRate) {
 
         const tx = await createFlowOperation.exec(signer.signer);
         const result = await tx.wait();
-        console.log(result);
 
         console.log(
             `%cCongrats - you've just subscribed for renting books!\n
@@ -110,7 +109,6 @@ export async function unsubscribe(sf, signer) {
 
         const tx = await deleteFlowOperation.exec(signer.signer);
         const result = await tx.wait();
-        console.log(result);
 
         console.log(
             `%cYou've just unsubscribed for renting books!\n
@@ -138,12 +136,12 @@ export async function getSuperTokenBalance(signer) {
 }
 
 export async function wrap(sf, signer, amount) {
-    const MATIC = new ethers.Contract(
-        "0xb9ca5e36d03cdb0dfa4561e7fec77ccd86a8b201",
-        MaticABI,
-        signer
-    );
-    const MATICx = await sf.loadSuperToken(network.polytest.acceptedToken);
+    // const MATIC = new ethers.Contract(
+    //     "0x0000000000000000000000000000000000000000",
+    //     MaticABI,
+    //     signer
+    // );
+    MATICx = await web3ModalSf.loadSuperToken(network.polytest.acceptedToken);
     try {
         // approving
         // console.log("Approving test MATIC spend.");
@@ -173,29 +171,50 @@ export async function wrap(sf, signer, amount) {
     }
 }
 
-// export async function unWrap(sf, signer, amount) {}
+export async function getFlowBalance(sf, sender, cb) {
+    await sf.query.on(
+        (events, unsubscribe) => {
+            cb(
+                Number(weiToEther(events[0].flowRate) * 2592000).toPrecision(3),
+                Number(weiToEther(events[1].flowRate) * 2592000).toPrecision(3)
+            );
+            unsubscribe();
+        },
+        3000,
+        sender
+    );
+}
 
-// flow balance (from contract/ to contract)
-export async function getFlowBalance(sf, sender) {
+export async function getStream(sf, sender) {
     const outFlow = await sf.query
-        .listStreams({
-            sender: sender,
-            receiver: addresses.rentor,
-            token: network.polytest.acceptedToken
-        })
+        .listStreams(
+            {
+                sender: sender,
+                receiver: addresses.rentor,
+                token: network.polytest.acceptedToken
+            },
+            {take: 1}
+        )
         .then(result => {
-            console.log(result.data);
-            return result.data[0].currentFlowRate;
+            if (result) {
+                return result.data[0].currentFlowRate;
+            }
+            return 0;
         });
     const inFlow = await sf.query
-        .listStreams({
-            sender: addresses.rentor,
-            receiver: sender,
-            token: network.polytest.acceptedToken
-        })
+        .listStreams(
+            {
+                sender: addresses.rentor,
+                receiver: sender,
+                token: network.polytest.acceptedToken
+            },
+            {take: 1}
+        )
         .then(result => {
-            console.log(result.data);
-            return result.data[0].currentFlowRate;
+            if (result) {
+                return result.data[0].currentFlowRate;
+            }
+            return 0;
         });
     return [
         Number(weiToEther(inFlow) * 2592000).toPrecision(3),

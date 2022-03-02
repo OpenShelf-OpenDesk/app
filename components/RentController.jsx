@@ -4,13 +4,22 @@ import Toggle from "./Toggle";
 import LoadingAnimation from "./LoadingAnimation";
 import {
     PencilAltIcon as PencilAltIconSolid,
-    PlusCircleIcon as PlusCircleIconSolid
+    PlusCircleIcon as PlusCircleIconSolid,
+    StarIcon
 } from "@heroicons/react/solid";
 import {
     PlusCircleIcon as PlusCircleIconOutline,
     PencilAltIcon as PencilAltIconOutline
 } from "@heroicons/react/outline";
-import {getFlowBalance, getSuperTokenBalance, subscribe, unsubscribe} from "../utils/superfluid";
+import {
+    getFlowBalance,
+    getStream,
+    getSuperTokenBalance,
+    subscribe,
+    unsubscribe,
+    updateSubscription,
+    wrap
+} from "../utils/superfluid";
 import {useSignerContext} from "../contexts/Signer";
 import {useSuperfluidFrameworkContext} from "../contexts/SuperfluidFramework";
 
@@ -25,26 +34,73 @@ const RentController = () => {
     const {signer} = useSignerContext();
     const {superfluidFramework} = useSuperfluidFrameworkContext();
 
+    const handleUpdateFlow = async () => {
+        setLoading(true);
+        setToggled(false);
+        await updateSubscription(superfluidFramework, signer, 1.5);
+        const balance = await getSuperTokenBalance(signer);
+        setSuperTokenBalance(balance);
+        await getFlowBalance(superfluidFramework, signer.address, (outFlow, inFlow) => {
+            setInFlowBalance(inFlow);
+            setOutFlowBalance(outFlow);
+            setLoading(false);
+            setToggled(true);
+        });
+    };
+
+    const handleWrap = async () => {
+        setLoading(true);
+        setToggled(false);
+        await wrap(superfluidFramework, signer, 0.8);
+        const balance = await getSuperTokenBalance(signer);
+        setSuperTokenBalance(balance);
+        setLoading(false);
+        setToggled(true);
+    };
+
     useEffect(() => {
         async function getData() {
             if (signer && superfluidFramework) {
-                if (toggle) {
+                const balance = await getSuperTokenBalance(signer);
+                setSuperTokenBalance(balance);
+                const streams = await getStream(superfluidFramework, signer.address);
+                if (streams) {
+                    setInFlowBalance(streams[0]);
+                    setOutFlowBalance(streams[1]);
+                    if (streams[1] > 0) {
+                        setToggled(true);
+                        setToggle(true);
+                    }
+                }
+            }
+        }
+        getData();
+    }, [signer]);
+
+    useEffect(() => {
+        async function getData() {
+            if (signer && superfluidFramework) {
+                console.log(toggle, toggled);
+                if (!toggled && toggle) {
                     setLoading(true);
                     await subscribe(superfluidFramework, signer, 0.5);
                     const balance = await getSuperTokenBalance(signer);
                     setSuperTokenBalance(balance);
-                    const result = await getFlowBalance(superfluidFramework, signer.address);
-                    setInFlowBalance(result[0]);
-                    setOutFlowBalance(result[1]);
-                    setLoading(false);
-                    setToggled(true);
-                } else {
-                    await unsubscribe(superfluidFramework, signer);
+                    await getFlowBalance(superfluidFramework, signer.address, (outFlow, inFlow) => {
+                        setInFlowBalance(inFlow);
+                        setOutFlowBalance(outFlow);
+                        setLoading(false);
+                        setToggled(true);
+                    });
+                } else if (toggled && !toggle) {
+                    setLoading(true);
                     setToggled(false);
+                    await unsubscribe(superfluidFramework, signer);
+                    setLoading(false);
                 }
             }
         }
-        getData(superfluidFramework, signer);
+        getData();
     }, [toggle]);
 
     return (
@@ -61,7 +117,11 @@ const RentController = () => {
                     }`}>
                     <div className="flex items-center justify-around pt-5">
                         <div className="flex flex-col items-center justify-between">
-                            <div className="group">
+                            <div
+                                className="group"
+                                onClick={() => {
+                                    handleUpdateFlow();
+                                }}>
                                 <PencilAltIconOutline className="mb-1 h-6 w-6 cursor-pointer group-hover:hidden" />
                                 <PencilAltIconSolid className="mb-1 hidden h-6 w-6 cursor-pointer group-hover:flex" />
                             </div>
@@ -77,7 +137,11 @@ const RentController = () => {
                             </span>
                         </div>
                         <div className="flex h-full flex-col items-center justify-between">
-                            <div className="group">
+                            <div
+                                className="group"
+                                onClick={() => {
+                                    handleWrap();
+                                }}>
                                 <PlusCircleIconOutline className="mb-1 h-6 w-6 cursor-pointer group-hover:hidden" />
                                 <PlusCircleIconSolid className="mb-1 hidden h-6 w-6 cursor-pointer group-hover:flex" />
                             </div>
