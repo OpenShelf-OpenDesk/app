@@ -23,7 +23,7 @@ const Navbar = ({isSidebarOpen, signer}) => {
                 isSidebarOpen ? "opacity-80" : "opacity-100"
             }`}>
             <div
-                className={`flex h-10 w-10 cursor-pointer items-center justify-center space-x-2 overflow-x-auto rounded lg:cursor-default ${
+                className={`flex h-10 w-10 cursor-pointer items-center justify-center space-x-2 overflow-x-auto rounded bg-white lg:cursor-default ${
                     theme === "os" ? "os-border-with-shadow" : "od-border-with-shadow"
                 } font-medium lg:w-96 lg:justify-start lg:p-2`}>
                 <SearchIcon className={`h-6 w-6 ${theme === "os" ? "os-icon" : "od-icon"}`} />
