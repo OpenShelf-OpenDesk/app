@@ -18,18 +18,21 @@ import {
     subscribe,
     unsubscribe,
     updateSubscription,
+    weiToEther,
     wrap
 } from "../utils/superfluid";
 import {useSignerContext} from "../contexts/Signer";
 import {useSuperfluidFrameworkContext} from "../contexts/SuperfluidFramework";
+import BigNumber from "bignumber.js";
 
 const RentController = () => {
     const [toggle, setToggle] = useState(false);
     const [toggled, setToggled] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [superTokenBalance, setSuperTokenBalance] = useState(0.0);
+    const [superTokenBalance, setSuperTokenBalance] = useState(0);
     const [inFlowBalance, setInFlowBalance] = useState(0);
     const [outFlowBalance, setOutFlowBalance] = useState(0);
+    const [netFlowState, setNetFlow] = useState(0);
 
     const {signer} = useSignerContext();
     const {superfluidFramework} = useSuperfluidFrameworkContext();
@@ -38,7 +41,7 @@ const RentController = () => {
         setLoading(true);
         setToggled(false);
         await updateSubscription(superfluidFramework, signer, 1.5);
-        const balance = await getSuperTokenBalance(signer);
+        const [balance, netFlow] = await getSuperTokenBalance(superfluidFramework, signer);
         setSuperTokenBalance(balance);
         await getFlowBalance(superfluidFramework, signer.address, (outFlow, inFlow) => {
             setInFlowBalance(inFlow);
@@ -52,17 +55,38 @@ const RentController = () => {
         setLoading(true);
         setToggled(false);
         await wrap(superfluidFramework, signer, 0.8);
-        const balance = await getSuperTokenBalance(signer);
+        const [balance, _] = await getSuperTokenBalance(superfluidFramework, signer);
         setSuperTokenBalance(balance);
         setLoading(false);
         setToggled(true);
     };
 
+    const updateSuperTokenBalance = async netFlow => {
+        netFlow = netFlow / 100;
+        let unsubscribeUpdateSuperTokenBalance;
+        if (toggle & (netFlow != 0)) {
+            unsubscribeUpdateSuperTokenBalance = setInterval(() => {
+                setSuperTokenBalance(state => {
+                    const x = Number(state) + Number(netFlow);
+                    return x;
+                });
+            }, 10);
+        } else {
+            clearInterval(unsubscribeUpdateSuperTokenBalance);
+        }
+    };
+
+    useEffect(() => {
+        updateSuperTokenBalance(netFlowState);
+    }, [toggle]);
+
     useEffect(() => {
         async function getData() {
             if (signer && superfluidFramework) {
-                const balance = await getSuperTokenBalance(signer);
+                const [balance, netFlow] = await getSuperTokenBalance(superfluidFramework, signer);
+                setNetFlow(netFlow);
                 setSuperTokenBalance(balance);
+                updateSuperTokenBalance(netFlow);
                 const streams = await getStream(superfluidFramework, signer.address);
                 if (streams) {
                     setInFlowBalance(streams[0]);
@@ -75,7 +99,7 @@ const RentController = () => {
             }
         }
         getData();
-    }, [signer]);
+    }, [signer, superfluidFramework]);
 
     useEffect(() => {
         async function getData() {
@@ -83,8 +107,12 @@ const RentController = () => {
                 console.log(toggle, toggled);
                 if (!toggled && toggle) {
                     setLoading(true);
-                    await subscribe(superfluidFramework, signer, 0.5);
-                    const balance = await getSuperTokenBalance(signer);
+                    await subscribe(superfluidFramework, signer, 1);
+                    const [balance, netFlow] = await getSuperTokenBalance(
+                        superfluidFramework,
+                        signer
+                    );
+                    setNetFlow(netFlow);
                     setSuperTokenBalance(balance);
                     await getFlowBalance(superfluidFramework, signer.address, (outFlow, inFlow) => {
                         setInFlowBalance(inFlow);
@@ -116,7 +144,7 @@ const RentController = () => {
                         !toggled && "blur-[3px]"
                     }`}>
                     <div className="flex items-center justify-around pt-5">
-                        <div className="flex flex-col items-center justify-between">
+                        <div className="flex w-full flex-col items-center justify-between">
                             <div
                                 className="group"
                                 onClick={() => {
@@ -125,7 +153,7 @@ const RentController = () => {
                                 <PencilAltIconOutline className="mb-1 h-6 w-6 cursor-pointer group-hover:hidden" />
                                 <PencilAltIconSolid className="mb-1 hidden h-6 w-6 cursor-pointer group-hover:flex" />
                             </div>
-                            <div className="flex items-center justify-between text-xl font-semibold">
+                            <div className="flex items-center justify-between font-mono text-xl font-semibold tracking-wider">
                                 {inFlowBalance}
                                 <span className="text-3xl font-light tracking-widest">/</span>
                                 {outFlowBalance}
@@ -136,7 +164,7 @@ const RentController = () => {
                                 (MATICx)
                             </span>
                         </div>
-                        <div className="flex h-full flex-col items-center justify-between">
+                        <div className="flex h-full w-full flex-col items-center justify-between">
                             <div
                                 className="group"
                                 onClick={() => {
@@ -145,8 +173,8 @@ const RentController = () => {
                                 <PlusCircleIconOutline className="mb-1 h-6 w-6 cursor-pointer group-hover:hidden" />
                                 <PlusCircleIconSolid className="mb-1 hidden h-6 w-6 cursor-pointer group-hover:flex" />
                             </div>
-                            <div className="flex items-center justify-center text-xl font-semibold">
-                                {superTokenBalance}
+                            <div className="flex items-center justify-center font-mono text-xl font-semibold tracking-wider">
+                                {Number(new BigNumber(superTokenBalance).shiftedBy(-18)).toFixed(4)}
                             </div>
                             <span className="text-center text-sm">
                                 MATICx

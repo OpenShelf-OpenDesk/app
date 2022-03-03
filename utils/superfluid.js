@@ -126,12 +126,17 @@ export async function unsubscribe(sf, signer) {
     }
 }
 
-export async function getSuperTokenBalance(signer) {
+export async function getSuperTokenBalance(sf, signer) {
+    const netFlow = await sf.cfaV1.getNetFlow({
+        superToken: network.polytest.acceptedToken,
+        account: signer.address,
+        providerOrSigner: signer.signer
+    });
     return await MATICx.balanceOf({
         account: signer.address,
         providerOrSigner: signer.signer
     }).then(balance => {
-        return Number(weiToEther(balance)).toPrecision(3);
+        return [balance, netFlow];
     });
 }
 
@@ -222,6 +227,6 @@ export async function getStream(sf, sender) {
     ];
 }
 
-function weiToEther(x) {
+export function weiToEther(x) {
     return ethers.utils.formatUnits(x, "ether");
 }

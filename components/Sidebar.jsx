@@ -4,16 +4,20 @@ import {DuplicateIcon as DuplicateIconSolid, XIcon, MenuAlt2Icon} from "@heroico
 import {DuplicateIcon as DuplicateIconOutline} from "@heroicons/react/outline";
 import {useThemeContext} from "../contexts/Theme";
 import RentController from "./RentController";
+import {useRouter} from "next/router";
 
 const Sidebar = ({open, setOpen, signer}) => {
     const {theme} = useThemeContext();
+    const router = useRouter();
 
     return (
-        <section className={`fixed top-0 h-full w-full lg:w-1/4`}>
+        <section
+            className={`fixed top-0 h-full w-24 transition-all duration-500
+            ease-in-out`}>
             <div className={`flex h-full w-full items-center`}>
-                <div className="z-40 flex h-full w-[76px] items-center bg-white lg:w-24">
+                <div className="z-40 flex h-full w-24 items-center bg-white">
                     <MenuAlt2Icon
-                        className={`absolute inset-6 h-6 w-6 cursor-pointer transition duration-300 ease-in-out  lg:inset-7 lg:h-8 lg:w-8 ${
+                        className={`absolute inset-7 h-8 w-8 cursor-pointer transition-all duration-500 ease-in-out ${
                             open ? "scale-0" : "scale-100"
                         } ${theme === "os" ? "os-icon" : "od-icon"}`}
                         onClick={() => {
@@ -21,26 +25,29 @@ const Sidebar = ({open, setOpen, signer}) => {
                         }}
                     />
                     <XIcon
-                        className={`absolute inset-6 h-6 w-6 cursor-pointer transition duration-300 ease-in-out lg:inset-7 lg:h-8 lg:w-8 ${
+                        className={`absolute inset-7 h-8 w-8 cursor-pointer transition-all duration-500 ease-in-out ${
                             open ? "scale-100" : "scale-0"
                         } ${theme === "os" ? "os-icon" : "od-icon"}`}
                         onClick={() => {
                             setOpen(false);
                         }}
                     />
-                    <div className="absolute bottom-[30%] flex origin-top-left -rotate-90 items-center px-2 pt-5 lg:pt-7">
+                    <div className="absolute bottom-[30%] flex origin-top-left -rotate-90 items-center px-2 pt-7">
                         <div
-                            className={`text-3xl font-semibold tracking-wider ${
+                            className={`cursor-pointer text-3xl font-semibold tracking-wider ${
                                 theme === "os" ? "text-os-500" : "text-od-500"
-                            } lg:text-4xl`}>
+                            } lg:text-4xl`}
+                            onClick={() => {
+                                router.push(`/${theme === "os" ? "openshelf" : "opendesk"}`);
+                            }}>
                             {theme === "os" ? "OpenShelf" : "OpenDesk"}
                         </div>
                     </div>
                 </div>
                 <div
                     className={`absolute z-10 ${
-                        open ? "-left-[38px] lg:left-0" : "-left-full"
-                    } ml-[76px] flex h-full w-full transform-gpu flex-col items-center overflow-hidden bg-white pt-12 shadow-2xl transition-all duration-200 ease-in-out lg:ml-24 lg:pt-10 ${
+                        open ? "left-0" : "-left-[480px]"
+                    } ml-20 flex h-full w-[480px] transform-gpu flex-col items-center overflow-hidden bg-white pt-10 shadow-2xl transition-all duration-300 ease-in-out ${
                         theme === "os" ? "shadow-os-500/30" : "shadow-od-500/20"
                     }`}>
                     <div className="flex flex-col items-center justify-between space-y-3 py-12 px-8">
@@ -58,19 +65,43 @@ const Sidebar = ({open, setOpen, signer}) => {
                                 {signer.address.substring(signer.address.length - 8)}
                             </span>
                             <DuplicateIconOutline
-                                className={`absolute right-0 h-4 w-4 transition duration-100 ease-in-out group-hover:scale-0 lg:h-5 lg:w-5 ${
+                                className={`absolute right-0 h-5 w-5 transition duration-100 ease-in-out group-hover:scale-0 ${
                                     theme === "os" ? "os-icon" : "od-icon"
                                 }`}
                             />
                             <DuplicateIconSolid
-                                className={`absolute right-0 h-4 w-4 scale-0 transition duration-100 ease-in-out group-hover:scale-100 lg:h-5 lg:w-5 ${
+                                className={`absolute right-0 h-5 w-5 scale-0 transition duration-100 ease-in-out group-hover:scale-100 ${
                                     theme === "os" ? "os-icon" : "od-icon"
                                 }`}
                             />
                         </div>
                     </div>
-                    <div className="h-full w-full">
-                        <RentController />
+                    <div className="flex h-full w-full flex-col justify-around">
+                        <div className="flex w-full flex-col items-center space-y-5 text-lg">
+                            <div
+                                className={`cursor-pointer text-os-500 ${
+                                    router.pathname.includes("home") && "font-semibold"
+                                }`}
+                                onClick={() => {
+                                    !router.pathname.includes("home") &&
+                                        router.push("/openshelf/home");
+                                }}>
+                                Home
+                            </div>
+                            <div
+                                className={`cursor-pointer text-os-500 ${
+                                    router.pathname.includes("shelf") && "font-semibold"
+                                }`}
+                                onClick={() => {
+                                    !router.pathname.includes("shelf") &&
+                                        router.push("/openshelf/shelf");
+                                }}>
+                                Shelf
+                            </div>
+                        </div>
+                        <div className="w-full">
+                            <RentController />
+                        </div>
                     </div>
                 </div>
             </div>

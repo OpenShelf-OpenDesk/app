@@ -11,6 +11,7 @@
         "@headlessui/react": "^1.4.3",
         "@heroicons/react": "^1.0.5",
         "@superfluid-finance/sdk-core": "^0.3.0",
+        "bignumber.js": "^9.0.2",
         "ethers": "^5.5.4",
         "next": "^12.1.0",
         "nft.storage": "^6.0.0",
