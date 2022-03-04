@@ -1,21 +1,21 @@
-import React, { useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-import LoadingAnimation from "./LoadingAnimation";
+import {useState} from "react";
+import {Document, Page, pdfjs} from "react-pdf";
+// import LoadingAnimation from "../common/LoadingAnimation";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
-const PreviewBook = ({ url, height, width, setNumOfPages, page, scale, setLoadingState }) => {
+const PreviewBook = ({url, height, width, setNumOfPages, page, scale, setLoadingState}) => {
     const [numPages, setNumPages] = useState(0);
     // const [loading, setLoading] = useState(true);
 
-    function onDocumentFullLoadSuccess({ numPages }) {
+    function onDocumentFullLoadSuccess({numPages}) {
         setNumOfPages(numPages);
         setTimeout(() => {
             setLoadingState(false);
         }, 1000);
     }
 
-    function onDocumentLoadSuccess({ numPages }) {
+    function onDocumentLoadSuccess({numPages}) {
         setNumPages(numPages);
     }
 
@@ -23,7 +23,7 @@ const PreviewBook = ({ url, height, width, setNumOfPages, page, scale, setLoadin
         return (
             <Document
                 file={url}
-                options={{ workerSrc: "/pdf.worker.min.js" }}
+                options={{workerSrc: "/pdf.worker.min.js"}}
                 onLoadSuccess={onDocumentFullLoadSuccess}
                 loading={""}
                 renderMode="svg">
@@ -43,7 +43,7 @@ const PreviewBook = ({ url, height, width, setNumOfPages, page, scale, setLoadin
         return (
             <Document
                 file={url}
-                options={{ workerSrc: "/pdf.worker.min.js" }}
+                options={{workerSrc: "/pdf.worker.min.js"}}
                 onLoadSuccess={onDocumentLoadSuccess}
                 loading={""}>
                 {Array.from(new Array(numPages), (el, index) => (
@@ -62,6 +62,8 @@ const PreviewBook = ({ url, height, width, setNumOfPages, page, scale, setLoadin
 };
 
 export default PreviewBook;
-{/* <div className="flex h-full w-full items-center justify-center">
+{
+    /* <div className="flex h-full w-full items-center justify-center">
     <LoadingAnimation />
-</div> */}
+</div> */
+}

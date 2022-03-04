@@ -5,13 +5,13 @@ import {
     ExclamationCircleIcon
 } from "@heroicons/react/solid";
 import {useState, useEffect} from "react";
-import ChipInputField from "../../components/ChipInputField";
-import PreviewBook from "../../components/PreviewBook";
+import {useRouter} from "next/router";
+import ChipInputField from "../../components/common/ChipInputField";
+import PreviewBook from "../../components/opendesk/PreviewBook";
+import ProgressStatus from "../../components/common/ProgressStatus";
+import List from "../../components/common/List";
 import {publish} from "../../controllers/Publisher";
 import {useSignerContext} from "../../contexts/Signer";
-import {useRouter} from "next/router";
-import ProgressStatus from "../../components/ProgressStatus";
-import List from "../../components/List";
 import {useThemeContext} from "../../contexts/Theme";
 import {useLoadingContext} from "../../contexts/Loading";
 

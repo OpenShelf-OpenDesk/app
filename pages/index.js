@@ -1,9 +1,13 @@
 import {useState} from "react";
-import Identicon from "../components/Identicon";
-import Wallet from "../components/Wallet";
-import Dropdown from "../components/DropdownMenu/Dropdown";
-import Item from "../components/DropdownMenu/Item";
-
+import Identicon from "../components/common/Identicon";
+import ChipInputField from "../components/common/ChipInputField";
+import Wallet from "../components/common/Wallet";
+import Dropdown from "../components/common/DropdownMenu/Dropdown";
+import Item from "../components/common/DropdownMenu/Item";
+import Layout from "../components/common/Layout";
+import List from "../components/common/List";
+import Modal from "../components/common/Modal";
+import {useLoadingContext} from "../contexts/Loading";
 import {
     UserIcon as UserIconSolid,
     CreditCardIcon as CreditCardIconSolid
@@ -12,11 +16,6 @@ import {
     UserIcon as UserIconOutline,
     CreditCardIcon as CreditCardIconOutline
 } from "@heroicons/react/outline";
-import ChipInputField from "../components/ChipInputField";
-import List from "../components/List";
-import Modal from "../components/Modal";
-import {useLoadingContext} from "../contexts/Loading";
-import Layout from "../components/Layout";
 
 export default function Home() {
     const options = [

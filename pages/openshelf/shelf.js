@@ -1,8 +1,8 @@
 import {useEffect} from "react";
-import Layout from "../../components/Layout";
+import Layout from "../../components/common/Layout";
+import Tabs from "../../components/common/Tabs";
 import {useLoadingContext} from "../../contexts/Loading";
 import {useThemeContext} from "../../contexts/Theme";
-import Tabs from "../../components/Tabs";
 
 const Shelf = () => {
     const {setTheme} = useThemeContext();

@@ -1,9 +1,8 @@
-import {useState} from "react";
 import {Switch} from "@headlessui/react";
-import {useThemeContext} from "../contexts/Theme";
+// import {useThemeContext} from "../../contexts/Theme";
 
 const Toggle = ({toggle, setToggle, loading}) => {
-    const {theme} = useThemeContext();
+    // const {theme} = useThemeContext();
 
     return (
         <Switch

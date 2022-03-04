@@ -2,8 +2,8 @@ import React from "react";
 import Identicon from "./Identicon";
 import {DuplicateIcon as DuplicateIconSolid, XIcon, MenuAlt2Icon} from "@heroicons/react/solid";
 import {DuplicateIcon as DuplicateIconOutline} from "@heroicons/react/outline";
-import {useThemeContext} from "../contexts/Theme";
-import RentController from "./RentController";
+import {useThemeContext} from "../../contexts/Theme";
+import RentController from "../openshelf/RentController";
 import {useRouter} from "next/router";
 
 const Sidebar = ({open, setOpen, signer}) => {

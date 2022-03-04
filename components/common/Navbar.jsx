@@ -12,7 +12,7 @@ import {
     CreditCardIcon as CreditCardIconOutline,
     BellIcon as BellIconOutline
 } from "@heroicons/react/outline";
-import {useThemeContext} from "../contexts/Theme";
+import {useThemeContext} from "../../contexts/Theme";
 
 const Navbar = ({isSidebarOpen, signer}) => {
     const {theme} = useThemeContext();

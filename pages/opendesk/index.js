@@ -1,4 +1,4 @@
-import Layout from "../../components/Layout";
+import Layout from "../../components/common/Layout";
 import Image from "next/image";
 import {useThemeContext} from "../../contexts/Theme";
 import {useEffect} from "react";

@@ -1,6 +1,6 @@
 import {Menu, Transition} from "@headlessui/react";
 import {Fragment} from "react";
-import {useThemeContext} from "../../contexts/Theme";
+import {useThemeContext} from "../../../contexts/Theme";
 
 const Dropdown = ({buttonComponent, children}) => {
     const {theme} = useThemeContext();

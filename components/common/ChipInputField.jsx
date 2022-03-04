@@ -1,5 +1,5 @@
 import {XCircleIcon} from "@heroicons/react/solid";
-import {useThemeContext} from "../contexts/Theme";
+import {useThemeContext} from "../../contexts/Theme";
 
 const ChipInputField = ({chips, setChips, className, placeholder}) => {
     const {theme} = useThemeContext();

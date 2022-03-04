@@ -4,9 +4,9 @@ import LoadingContext from "../contexts/Loading";
 import SignerContext from "../contexts/Signer";
 import SuperfluidFrameworkContext from "../contexts/SuperfluidFramework";
 import {useState, useEffect} from "react";
-import LoadingView from "../components/LoadingView";
+import LoadingView from "../components/common/LoadingView";
+import Modal from "../components/common/Modal";
 import {connectToWallet} from "../utils/metamask";
-import Modal from "../components/Modal";
 import {initializeSF} from "../utils/superfluid";
 
 function MyApp({Component, pageProps}) {

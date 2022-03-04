@@ -1,7 +1,7 @@
 import React from "react";
 import {ChevronDownIcon} from "@heroicons/react/solid";
 import Identicon from "./Identicon";
-import {useThemeContext} from "../contexts/Theme";
+import {useThemeContext} from "../../contexts/Theme";
 
 const Wallet = ({className, seed}) => {
     const {theme} = useThemeContext();

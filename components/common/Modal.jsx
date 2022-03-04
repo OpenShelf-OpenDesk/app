@@ -1,6 +1,6 @@
 import {Dialog, Transition} from "@headlessui/react";
 import {Fragment} from "react";
-import {useThemeContext} from "../contexts/Theme";
+import {useThemeContext} from "../../contexts/Theme";
 
 import React from "react";
 

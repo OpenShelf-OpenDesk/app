@@ -1,11 +1,10 @@
 import Image from "next/image";
 import {useState, useEffect} from "react";
-import Toggle from "./Toggle";
-import LoadingAnimation from "./LoadingAnimation";
+import Toggle from "../common/Toggle";
+import LoadingAnimation from "../common/LoadingAnimation";
 import {
     PencilAltIcon as PencilAltIconSolid,
-    PlusCircleIcon as PlusCircleIconSolid,
-    StarIcon
+    PlusCircleIcon as PlusCircleIconSolid
 } from "@heroicons/react/solid";
 import {
     PlusCircleIcon as PlusCircleIconOutline,
@@ -19,9 +18,9 @@ import {
     unsubscribe,
     updateSubscription,
     wrap
-} from "../utils/superfluid";
-import {useSignerContext} from "../contexts/Signer";
-import {useSuperfluidFrameworkContext} from "../contexts/SuperfluidFramework";
+} from "../../utils/superfluid";
+import {useSignerContext} from "../../contexts/Signer";
+import {useSuperfluidFrameworkContext} from "../../contexts/SuperfluidFramework";
 import BigNumber from "bignumber.js";
 import {useRouter} from "next/router";
 

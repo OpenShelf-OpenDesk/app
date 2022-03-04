@@ -1,5 +1,5 @@
 import {Menu} from "@headlessui/react";
-import {useThemeContext} from "../../contexts/Theme";
+import {useThemeContext} from "../../../contexts/Theme";
 
 const Item = ({name, activeIcon, inactiveIcon}) => {
     const {theme} = useThemeContext();
