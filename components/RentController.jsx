@@ -18,37 +18,39 @@ import {
     subscribe,
     unsubscribe,
     updateSubscription,
-    weiToEther,
     wrap
 } from "../utils/superfluid";
 import {useSignerContext} from "../contexts/Signer";
 import {useSuperfluidFrameworkContext} from "../contexts/SuperfluidFramework";
 import BigNumber from "bignumber.js";
+import {useRouter} from "next/router";
 
 const RentController = () => {
+    const router = useRouter();
     const [toggle, setToggle] = useState(false);
     const [toggled, setToggled] = useState(false);
     const [loading, setLoading] = useState(false);
     const [superTokenBalance, setSuperTokenBalance] = useState(0);
     const [inFlowBalance, setInFlowBalance] = useState(0);
     const [outFlowBalance, setOutFlowBalance] = useState(0);
-    const [netFlowState, setNetFlow] = useState(0);
+    const [intervalId, setIntervalId] = useState(0);
+    const [balanceRunOutDate, setBalanceRunOutDate] = useState(0);
 
     const {signer} = useSignerContext();
     const {superfluidFramework} = useSuperfluidFrameworkContext();
 
     const handleUpdateFlow = async () => {
-        setLoading(true);
         setToggled(false);
-        await updateSubscription(superfluidFramework, signer, 1.5);
-        const [balance, netFlow] = await getSuperTokenBalance(superfluidFramework, signer);
-        setSuperTokenBalance(balance);
-        await getFlowBalance(superfluidFramework, signer.address, (outFlow, inFlow) => {
-            setInFlowBalance(inFlow);
-            setOutFlowBalance(outFlow);
-            setLoading(false);
-            setToggled(true);
-        });
+        setLoading(true);
+        try {
+            await updateSubscription(superfluidFramework, signer, Number(outFlowBalance) + 1);
+            await updateFlowBalance(() => {
+                setLoading(false);
+                setToggled(true);
+            });
+        } catch (error) {
+            router.reload();
+        }
     };
 
     const handleWrap = async () => {
@@ -61,74 +63,102 @@ const RentController = () => {
         setToggled(true);
     };
 
-    const updateSuperTokenBalance = async netFlow => {
-        netFlow = netFlow / 100;
-        let unsubscribeUpdateSuperTokenBalance;
-        if (toggle & (netFlow != 0)) {
-            unsubscribeUpdateSuperTokenBalance = setInterval(() => {
-                setSuperTokenBalance(state => {
-                    const x = Number(state) + Number(netFlow);
-                    return x;
-                });
-            }, 10);
-        } else {
-            clearInterval(unsubscribeUpdateSuperTokenBalance);
-        }
+    const updateSuperTokenBalance = async on => {
+        try {
+            const [balance, netFlow] = await getSuperTokenBalance(superfluidFramework, signer);
+            Number(netFlow) < 0
+                ? setBalanceRunOutDate(
+                      new Date().getTime() +
+                          Number(((Number(balance) / Number(netFlow)) * -1).toFixed(0)) * 1000
+                  )
+                : setBalanceRunOutDate(-1);
+
+            setSuperTokenBalance(balance);
+            if (!on) {
+                console.log("clear interval");
+                clearInterval(intervalId);
+                return;
+            }
+            if (on && netFlow != 0) {
+                console.log("3", toggle, toggled, loading);
+                netFlow = netFlow / 100;
+                const id = setInterval(() => {
+                    setSuperTokenBalance(state => {
+                        const x = Number(state) + Number(netFlow);
+                        return x;
+                    });
+                }, 10);
+                setIntervalId(id);
+            }
+        } catch (error) {}
+    };
+
+    const updateFlowBalance = async cb => {
+        await getFlowBalance(superfluidFramework, signer.address, (outFlow, inFlow) => {
+            setInFlowBalance(inFlow);
+            setOutFlowBalance(outFlow);
+            cb();
+        });
     };
 
     useEffect(() => {
-        updateSuperTokenBalance(netFlowState);
-    }, [toggle]);
-
-    useEffect(() => {
+        setToggled(false);
+        setToggle(false);
         async function getData() {
             if (signer && superfluidFramework) {
-                const [balance, netFlow] = await getSuperTokenBalance(superfluidFramework, signer);
-                setNetFlow(netFlow);
-                setSuperTokenBalance(balance);
-                updateSuperTokenBalance(netFlow);
+                await updateSuperTokenBalance(false);
                 const streams = await getStream(superfluidFramework, signer.address);
                 if (streams) {
-                    setInFlowBalance(streams[0]);
-                    setOutFlowBalance(streams[1]);
                     if (streams[1] > 0) {
+                        await updateSuperTokenBalance(true);
+                        setInFlowBalance(streams[0]);
+                        setOutFlowBalance(streams[1]);
                         setToggled(true);
                         setToggle(true);
                     }
                 }
             }
         }
-        getData();
+        try {
+            getData();
+        } catch (error) {
+            router.reload();
+        }
     }, [signer, superfluidFramework]);
 
     useEffect(() => {
         async function getData() {
             if (signer && superfluidFramework) {
-                console.log(toggle, toggled);
                 if (!toggled && toggle) {
-                    setLoading(true);
-                    await subscribe(superfluidFramework, signer, 1);
-                    const [balance, netFlow] = await getSuperTokenBalance(
-                        superfluidFramework,
-                        signer
-                    );
-                    setNetFlow(netFlow);
-                    setSuperTokenBalance(balance);
-                    await getFlowBalance(superfluidFramework, signer.address, (outFlow, inFlow) => {
-                        setInFlowBalance(inFlow);
-                        setOutFlowBalance(outFlow);
-                        setLoading(false);
-                        setToggled(true);
-                    });
+                    if (Number(new BigNumber(superTokenBalance).shiftedBy(-18)).toFixed(4) >= 0.5) {
+                        setLoading(true);
+                        await subscribe(superfluidFramework, signer, 1);
+                        await updateSuperTokenBalance(true);
+                        await updateFlowBalance(() => {
+                            setLoading(false);
+                            setToggled(true);
+                        });
+                    } else {
+                        alert("Insufficient balance. Required minimum of 0.5 MATICx tokens.");
+                        setToggle(false);
+                    }
                 } else if (toggled && !toggle) {
-                    setLoading(true);
                     setToggled(false);
+                    setLoading(true);
                     await unsubscribe(superfluidFramework, signer);
-                    setLoading(false);
+                    await updateSuperTokenBalance(false);
+                    await updateFlowBalance(() => {
+                        setLoading(false);
+                    });
                 }
             }
         }
-        getData();
+        try {
+            getData();
+        } catch (error) {
+            console.log("error");
+            router.reload();
+        }
     }, [toggle]);
 
     return (
@@ -183,8 +213,24 @@ const RentController = () => {
                             </span>
                         </div>
                     </div>
-
-                    <div className="mt-10 flex items-center justify-center space-x-3 font-semibold tracking-wider text-black">
+                    <div
+                        className={` ${
+                            Math.abs(balanceRunOutDate - new Date().getTime()) <= 172800000
+                                ? "visible"
+                                : "invisible"
+                        } w-full px-5 pt-5 text-center font-medium text-red-500`}>
+                        Your balance is going to run out on &nbsp;
+                        {new Date(balanceRunOutDate).toLocaleString("en-US", {
+                            weekday: "long",
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric"
+                        })}
+                        &nbsp;{Math.abs(new Date(balanceRunOutDate).getHours() - 12)}:
+                        {new Date(balanceRunOutDate).getMinutes()}&nbsp;
+                        {new Date(balanceRunOutDate).getHours() >= 12 ? "PM" : "AM"}
+                    </div>
+                    <div className="mt-5 flex items-center justify-center space-x-3 font-semibold tracking-wider text-black">
                         <span>Powered by</span>
                         <a
                             href="https://www.superfluid.finance/home"
@@ -212,18 +258,3 @@ const RentController = () => {
 };
 
 export default RentController;
-
-//Sidebar :
-//   - logo vertical
-//   - superfluid native dashboard
-//     - wallet balance and date of empty
-//     - flow balance (from contract/ to contract)
-//     - subscribe(to contract), increment, decrement, unsubscribe
-//     - link to app.superfluid.finance
-//   - shelf link
-//   - toggle dark mode
-//   - toggle dark mode
-//   - toggle dark mode
-//   - toggle dark mode
-//   - toggle dark mode
-//   - toggle dark mode

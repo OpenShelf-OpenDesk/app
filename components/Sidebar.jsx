@@ -77,26 +77,35 @@ const Sidebar = ({open, setOpen, signer}) => {
                         </div>
                     </div>
                     <div className="flex h-full w-full flex-col justify-around">
-                        <div className="flex w-full flex-col items-center space-y-5 text-lg">
+                        <div className="flex w-full flex-col items-center space-y-7 text-lg">
                             <div
                                 className={`cursor-pointer text-os-500 ${
-                                    router.pathname.includes("home") && "font-semibold"
+                                    router.pathname === "/openshelf" && "font-semibold"
                                 }`}
                                 onClick={() => {
-                                    !router.pathname.includes("home") &&
-                                        router.push("/openshelf/home");
+                                    router.pathname !== "/openshelf" && router.push("/openshelf");
                                 }}>
                                 Home
                             </div>
                             <div
                                 className={`cursor-pointer text-os-500 ${
-                                    router.pathname.includes("shelf") && "font-semibold"
+                                    router.pathname === "/openshelf/shelf" && "font-semibold"
                                 }`}
                                 onClick={() => {
-                                    !router.pathname.includes("shelf") &&
+                                    router.pathname !== "/openshelf/shelf" &&
                                         router.push("/openshelf/shelf");
                                 }}>
                                 Shelf
+                            </div>
+                            <div
+                                className={`cursor-pointer text-os-500 ${
+                                    router.pathname === "/openshelf/aboutUs" && "font-semibold"
+                                }`}
+                                onClick={() => {
+                                    router.pathname !== "/openshelf/aboutUs" &&
+                                        router.push("/openshelf/aboutUs");
+                                }}>
+                                About Us
                             </div>
                         </div>
                         <div className="w-full">
