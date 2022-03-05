@@ -2,7 +2,9 @@ import Image from "next/image";
 import {
     ArrowNarrowLeftIcon,
     DocumentRemoveIcon,
-    ExclamationCircleIcon
+    ExclamationCircleIcon,
+    PlusIcon,
+    XCircleIcon
 } from "@heroicons/react/solid";
 import {useState, useEffect} from "react";
 import {useRouter} from "next/router";
@@ -10,14 +12,18 @@ import ChipInputField from "../../components/common/ChipInputField";
 import PreviewBook from "../../components/opendesk/PreviewBook";
 import ProgressStatus from "../../components/common/ProgressStatus";
 import List from "../../components/common/List";
-import {publish} from "../../controllers/Publisher";
+import {launchNewBook} from "../../controllers/Publisher";
 import {useSignerContext} from "../../contexts/Signer";
 import {useThemeContext} from "../../contexts/Theme";
 import {useLoadingContext} from "../../contexts/Loading";
+import Identicon from "../../components/common/Identicon";
+import {addContributors} from "../../controllers/Edition";
 
 const Publish = () => {
     const {setTheme} = useThemeContext();
     const {setLoading} = useLoadingContext();
+    const {signer} = useSignerContext();
+    const router = useRouter();
 
     useEffect(() => {
         setTheme("od");
@@ -52,21 +58,48 @@ const Publish = () => {
         "Other"
     ];
 
-    const {signer} = useSignerContext();
-    const router = useRouter();
     const [req, setReq] = useState(false);
+    const [contributorReq, setContributorReq] = useState(false);
+    const [contributorAddForm, setContributorAddForm] = useState(false);
     const [supplyLimited, setSupplyLimited] = useState(false);
     const [genres, setGenres] = useState([]);
     const [keywords, setKeywords] = useState([]);
+    const [contributors, setContributors] = useState([]);
+    const [copyrights, setCopyrights] = useState(`Copyright © ${new Date().getFullYear()}`);
     const [selectedLanguageOption, setSelectedLanguageOption] = useState(languageOptions[0]);
     const [selectedBookFile, setSelectedBookFile] = useState();
     const [selectedBookLocalURL, setSelectedBookLocalURL] = useState("");
     const [progressStatus, setProgressStatus] = useState(0);
     const [validSubmitAttempt, setValidSubmitAttempt] = useState(false);
     const [invalidSubmitAttempt, setInvalidSubmitAttempt] = useState(false);
+    const [newContributorRole, setNewContributorRole] = useState("");
+    const [newContributorAddress, setNewContributorAddress] = useState("");
+    const [newContributorShare, setNewContributorShare] = useState("");
+
+    useEffect(() => {
+        setContributors(() => {
+            return [{contributorAddress: signer.address, share: 100, role: "Author & Publisher"}];
+        });
+    }, [signer]);
 
     const setProgressStatusCB = statusCode => {
         setProgressStatus(statusCode);
+    };
+
+    const handleContributorSubmit = async e => {
+        const newContributor = {
+            contributorAddress: newContributorAddress,
+            share: newContributorShare,
+            role: newContributorRole
+        };
+        setContributors(state => {
+            return [...state, newContributor];
+        });
+        setContributorAddForm(false);
+        setContributorReq(false);
+        setNewContributorAddress("");
+        setNewContributorRole("");
+        setNewContributorShare("");
     };
 
     const handleSubmit = async e => {
@@ -84,16 +117,16 @@ const Publish = () => {
                 keywords: keywords,
                 copyrights: e.target.copyrights.value,
                 language: selectedLanguageOption,
-                edition: e.target.edition.value ? e.target.edition.value : 0,
-                prequel: e.target.prequel.value ? e.target.prequel.value : 0,
                 supplyLimited: supplyLimited,
                 pricedBookSupplyLimit: supplyLimited ? e.target.pricedBookSupplyLimit.value : 0,
                 file: selectedBookFile
             };
-            await publish(signer.signer, newBook, setProgressStatusCB);
+            const editionAddress = await launchNewBook(signer.signer, newBook, setProgressStatusCB);
+            await addContributors(signer.signer, editionAddress, contributors);
             setTimeout(() => {
                 router.push(`/opendesk`);
             }, 1000);
+
             console.log(newBook);
         } else {
             setInvalidSubmitAttempt(true);
@@ -115,9 +148,9 @@ const Publish = () => {
                     />
                 </div>
                 <form
-                    className="no-scrollbar grid h-full w-full grid-cols-2 gap-20 overflow-scroll px-32 py-12 accent-od-400"
+                    className="no-scrollbar grid h-full w-full grid-cols-2 gap-14 overflow-scroll px-28 py-12 accent-od-400"
                     onSubmit={handleSubmit}>
-                    <div className="m-auto h-full max-w-full overflow-scroll rounded border-2 border-od-400 shadow-lg shadow-od-300/50">
+                    <div className="m-auto h-[85%] max-w-full overflow-scroll rounded border-2 border-od-400 shadow-lg shadow-od-300/50">
                         {selectedBookFile ? (
                             <>
                                 <div
@@ -218,6 +251,48 @@ const Publish = () => {
                             />
                             <span className="peer-input-text">{"|"}</span>
                         </div>
+                        <div className="flex w-full flex-row justify-between space-x-5">
+                            <div className="flex w-full space-x-1">
+                                <div className="mt-4 flex w-full items-center space-x-2">
+                                    <input
+                                        id="supplyLimited"
+                                        name="supplyLimited"
+                                        type="checkbox"
+                                        title="Check to limit supply."
+                                        className="text-lg"
+                                        onChange={() => {
+                                            setSupplyLimited(state => !state);
+                                        }}
+                                    />
+                                    <label htmlFor="supplyLimited">Supply Limited ?</label>
+                                </div>
+                                <div className="flex w-full flex-col-reverse">
+                                    <input
+                                        name="pricedBookSupplyLimit"
+                                        type="number"
+                                        placeholder="Book Supply Limit"
+                                        className="input-text peer w-full"
+                                        title="Enter supply limit of the book."
+                                        autoComplete="off"
+                                        step="1"
+                                        min="0"
+                                        disabled={!supplyLimited}
+                                        required={supplyLimited && req}
+                                    />
+                                    <span className="peer-input-text">{"|"}</span>
+                                </div>
+                            </div>
+                            <div
+                                className="flex w-full flex-col-reverse"
+                                title="Select language of the book.">
+                                <List
+                                    selected={selectedLanguageOption}
+                                    setSelected={setSelectedLanguageOption}
+                                    options={languageOptions}
+                                />
+                                <span className="peer-input-text">{"|"}</span>
+                            </div>
+                        </div>
                         <div
                             className="flex flex-col-reverse"
                             title="Enter genres (separated by comma) of the book">
@@ -238,6 +313,155 @@ const Publish = () => {
                             />
                             <span className="peer-input-text">{"|"}</span>
                         </div>
+                        <div className="flex flex-col">
+                            <span className="peer-input-text">{"|"}</span>
+                            <div className="input-text flex flex-col justify-center">
+                                <span className="flex-0 text-sm font-medium text-gray-400">
+                                    Contributors
+                                </span>
+                                <div className="flex w-full items-center justify-center space-x-7 px-5">
+                                    <div className="flex snap-x items-center justify-between space-x-5 overflow-x-scroll px-5 pt-3">
+                                        {contributors.map((contributor, index) => {
+                                            return (
+                                                <div
+                                                    key={index}
+                                                    className="group flex snap-start flex-col items-center justify-center text-xs">
+                                                    <div className="relative mb-1">
+                                                        <Identicon
+                                                            seed={contributor.contributorAddress}
+                                                            scale={7}
+                                                            className="transition duration-200 ease-in-out group-hover:scale-95"
+                                                        />
+                                                        {contributors.length > 1 && (
+                                                            <XCircleIcon
+                                                                className="absolute -right-5 -top-3 z-10 h-5 w-5 scale-0 cursor-pointer text-od-500 transition duration-100 ease-in-out group-hover:scale-100"
+                                                                onClick={() => {
+                                                                    setContributors(state => {
+                                                                        return state.filter(_ => {
+                                                                            return (
+                                                                                _.contributorAddress !==
+                                                                                contributor.contributorAddress
+                                                                            );
+                                                                        });
+                                                                    });
+                                                                }}
+                                                            />
+                                                        )}
+                                                    </div>
+                                                    <span className="text-center">
+                                                        {contributor.contributorAddress.substring(
+                                                            0,
+                                                            5
+                                                        )}
+                                                        .....
+                                                        {contributor.contributorAddress.substring(
+                                                            contributor.contributorAddress.length -
+                                                                3
+                                                        )}
+                                                    </span>
+                                                    <span className="text-center">
+                                                        {contributor.role}
+                                                    </span>
+                                                    <span className="text-center">
+                                                        {contributor.share}
+                                                    </span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                    {contributorAddForm ? (
+                                        <div className="flex w-[53%] flex-col justify-center space-y-1 pb-2">
+                                            <div className="flex w-full flex-col-reverse">
+                                                <input
+                                                    name="address"
+                                                    value={newContributorAddress}
+                                                    onChange={e => {
+                                                        setNewContributorAddress(e.target.value);
+                                                    }}
+                                                    type="text"
+                                                    placeholder="Contributor Address"
+                                                    title="Enter address of the contributor."
+                                                    className="input-text peer w-full"
+                                                    autoComplete="off"
+                                                    required={contributorReq}
+                                                />
+                                                <span className="peer-input-text">{"|"}</span>
+                                            </div>
+                                            <div className="flex w-full space-x-2">
+                                                <div className="flex w-1/3 flex-col-reverse">
+                                                    <input
+                                                        name="share"
+                                                        value={newContributorShare}
+                                                        onChange={e => {
+                                                            setNewContributorShare(e.target.value);
+                                                        }}
+                                                        type="number"
+                                                        placeholder="Share"
+                                                        title="Enter share of the contributor in the book."
+                                                        className="input-text peer w-full"
+                                                        autoComplete="off"
+                                                        step="any"
+                                                        min="0"
+                                                        required={contributorReq}
+                                                    />
+                                                    <span className="peer-input-text">{"|"}</span>
+                                                </div>
+                                                <div className="flex w-full flex-col-reverse">
+                                                    <input
+                                                        name="role"
+                                                        value={newContributorRole}
+                                                        onChange={e => {
+                                                            setNewContributorRole(e.target.value);
+                                                        }}
+                                                        type="text"
+                                                        placeholder="Role"
+                                                        title="Enter role of the contributor in the book."
+                                                        className="input-text peer w-full"
+                                                        autoComplete="off"
+                                                        required={contributorReq}
+                                                    />
+                                                    <span className="peer-input-text">{"|"}</span>
+                                                </div>
+                                            </div>
+                                            <div className="flex space-x-2 pt-3">
+                                                <button
+                                                    className="button-od w-full bg-black/50 hover:bg-black/60"
+                                                    onClick={() => {
+                                                        setContributorAddForm(false);
+                                                        setContributorReq(false);
+                                                    }}>
+                                                    Cancel
+                                                </button>
+                                                <button
+                                                    className="button-od w-full"
+                                                    onClick={() => {
+                                                        if (
+                                                            newContributorAddress === "" ||
+                                                            newContributorRole === "" ||
+                                                            newContributorShare === ""
+                                                        ) {
+                                                            setContributorReq(true);
+                                                        } else {
+                                                            handleContributorSubmit();
+                                                        }
+                                                    }}>
+                                                    Add
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            className="flex cursor-pointer items-center justify-center rounded bg-od-500/[0.1] p-5 transition duration-200 ease-in-out hover:scale-95"
+                                            onClick={() => {
+                                                setContributorAddForm(true);
+                                            }}>
+                                            <PlusIcon className="h-8 w-8 text-od-500" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="flex flex-col-reverse">
                             <textarea
                                 name="copyrights"
@@ -245,48 +469,13 @@ const Publish = () => {
                                 title="Enter copyrights for the book."
                                 className="input-text peer"
                                 autoComplete="off"
-                                value={`Copyright © ${new Date().getFullYear()}`}
+                                value={copyrights}
                                 required={req}
+                                onChange={e => {
+                                    setCopyrights(e.target.value);
+                                }}
                             />
                             <span className="peer-input-text">{"|"}</span>
-                        </div>
-                        <div className="flex w-full flex-row space-x-2">
-                            <div className="flex w-full flex-col-reverse">
-                                <input
-                                    name="edition"
-                                    type="number"
-                                    placeholder="Edition"
-                                    title="Enter the Book ID of previous Edition."
-                                    className="input-text peer"
-                                    autoComplete="off"
-                                    step="1"
-                                    min="0"
-                                />
-                                <span className="peer-input-text">{"|"}</span>
-                            </div>
-                            <div className="flex w-full flex-col-reverse">
-                                <input
-                                    name="prequel"
-                                    type="number"
-                                    placeholder="Prequel"
-                                    title="Enter the Book ID of the prequel."
-                                    className="input-text peer"
-                                    autoComplete="off"
-                                    step="1"
-                                    min="0"
-                                />
-                                <span className="peer-input-text">{"|"}</span>
-                            </div>
-                            <div
-                                className="flex w-full flex-col-reverse"
-                                title="Select language of the book.">
-                                <List
-                                    selected={selectedLanguageOption}
-                                    setSelected={setSelectedLanguageOption}
-                                    options={languageOptions}
-                                />
-                                <span className="peer-input-text">{"|"}</span>
-                            </div>
                         </div>
                         <div className="flex w-full flex-row space-x-2">
                             <div className="flex w-full flex-col-reverse">
@@ -330,36 +519,6 @@ const Publish = () => {
                                 <span className="peer-input-text">{"|"}</span>
                             </div>
                         </div>
-                        <div className="flex w-full flex-row justify-between space-x-5">
-                            <div className="mt-4 flex items-center space-x-2">
-                                <input
-                                    id="supplyLimited"
-                                    name="supplyLimited"
-                                    type="checkbox"
-                                    title="Check to limit supply."
-                                    className="text-lg"
-                                    onChange={() => {
-                                        setSupplyLimited(state => !state);
-                                    }}
-                                />
-                                <label htmlFor="supplyLimited">Supply Limited ?</label>
-                            </div>
-                            <div className="flex flex-1 flex-col-reverse">
-                                <input
-                                    name="pricedBookSupplyLimit"
-                                    type="number"
-                                    placeholder="Book Supply Limit"
-                                    className="input-text peer w-full"
-                                    title="Enter supply limit of the book."
-                                    autoComplete="off"
-                                    step="1"
-                                    min="0"
-                                    disabled={!supplyLimited}
-                                    required={supplyLimited && req}
-                                />
-                                <span className="peer-input-text">{"|"}</span>
-                            </div>
-                        </div>
                         <div className="w-full pt-3">
                             <button
                                 className="button-od w-full"
@@ -378,17 +537,3 @@ const Publish = () => {
 };
 
 export default Publish;
-
-// type BookMetaData @entity {
-//     id: ID!
-//     title: String!
-//     subTitle: String!
-//     language: String!
-//     BigIntPublished: BigInt!
-//     description: String!
-//     copyrights: String!
-//     keywords: [String!]!
-//     fiction: Boolean!
-//     genre: [String!]!
-//     currency: String!
-// }
