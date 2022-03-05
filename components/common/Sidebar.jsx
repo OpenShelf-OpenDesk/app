@@ -76,42 +76,103 @@ const Sidebar = ({open, setOpen, signer}) => {
                             />
                         </div>
                     </div>
-                    <div className="flex h-full w-full flex-col justify-around">
-                        <div className="flex w-full flex-col items-center space-y-7 text-lg">
+                    {theme === "os" ? (
+                        <div className="flex h-full w-full flex-col justify-around">
+                            <div className="flex w-full flex-col items-center space-y-3 text-lg">
+                                <div
+                                    className={`cursor-pointer text-os-500 ${
+                                        router.pathname === "/openshelf"
+                                            ? "scale-110 font-bold tracking-wider"
+                                            : "font-medium hover:font-semibold"
+                                    }`}
+                                    onClick={() => {
+                                        router.pathname !== "/openshelf" &&
+                                            router.push("/openshelf");
+                                    }}>
+                                    Home
+                                </div>
+                                <div
+                                    className={`cursor-pointer text-os-500 ${
+                                        router.pathname === "/openshelf/shelf"
+                                            ? "scale-110 font-bold tracking-wider"
+                                            : "font-medium hover:font-semibold"
+                                    }`}
+                                    onClick={() => {
+                                        router.pathname !== "/openshelf/shelf" &&
+                                            router.push("/openshelf/shelf");
+                                    }}>
+                                    Shelf
+                                </div>
+                                <div
+                                    className={`cursor-pointer text-os-500 ${
+                                        router.pathname === "/openshelf/about"
+                                            ? "scale-110 font-bold tracking-wider"
+                                            : "font-medium hover:font-semibold"
+                                    }`}
+                                    onClick={() => {
+                                        router.pathname !== "/openshelf/about" &&
+                                            router.push("/openshelf/about");
+                                    }}>
+                                    About
+                                </div>
+                                <div
+                                    className={`flex w-1/3 cursor-pointer justify-center border-t-2 pt-3 font-medium text-od-500`}
+                                    onClick={() => {
+                                        router.push("/opendesk");
+                                    }}>
+                                    OpenDesk
+                                </div>
+                            </div>
+                            <div className="w-full">
+                                <RentController />
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="mt-20 flex h-full w-full flex-col items-center justify-start space-y-5 text-lg">
                             <div
-                                className={`cursor-pointer text-os-500 ${
-                                    router.pathname === "/openshelf" && "font-semibold"
+                                className={`cursor-pointer text-od-500 ${
+                                    router.pathname === "/opendesk"
+                                        ? "scale-110 font-bold tracking-wider"
+                                        : "font-medium hover:font-semibold"
                                 }`}
                                 onClick={() => {
-                                    router.pathname !== "/openshelf" && router.push("/openshelf");
+                                    router.pathname !== "/opendesk" && router.push("/opendesk");
                                 }}>
                                 Home
                             </div>
                             <div
-                                className={`cursor-pointer text-os-500 ${
-                                    router.pathname === "/openshelf/shelf" && "font-semibold"
+                                className={`cursor-pointer text-od-500 ${
+                                    router.pathname === "/opendesk/desk"
+                                        ? "scale-110 font-bold tracking-wider"
+                                        : "font-medium hover:font-semibold"
                                 }`}
                                 onClick={() => {
-                                    router.pathname !== "/openshelf/shelf" &&
-                                        router.push("/openshelf/shelf");
+                                    router.pathname !== "/opendesk/desk" &&
+                                        router.push("/opendesk/shelf");
                                 }}>
-                                Shelf
+                                Desk
                             </div>
                             <div
-                                className={`cursor-pointer text-os-500 ${
-                                    router.pathname === "/openshelf/aboutUs" && "font-semibold"
+                                className={`cursor-pointer pb-5 text-od-500 ${
+                                    router.pathname === "/opendesk/about"
+                                        ? "scale-110 font-bold tracking-wider"
+                                        : "font-medium hover:font-semibold"
                                 }`}
                                 onClick={() => {
-                                    router.pathname !== "/openshelf/aboutUs" &&
-                                        router.push("/openshelf/aboutUs");
+                                    router.pathname !== "/opendesk/about" &&
+                                        router.push("/opendesk/about");
                                 }}>
-                                About Us
+                                About
+                            </div>
+                            <div
+                                className={`flex w-1/3 cursor-pointer justify-center border-t-2 pt-10  font-medium text-os-500`}
+                                onClick={() => {
+                                    router.push("/openshelf");
+                                }}>
+                                OpenShelf
                             </div>
                         </div>
-                        <div className="w-full">
-                            <RentController />
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </section>
@@ -119,13 +180,3 @@ const Sidebar = ({open, setOpen, signer}) => {
 };
 
 export default Sidebar;
-
-//Sidebar :
-//   - logo vertical
-//   - superfluid native dashboard
-//     - wallet balance and date of empty
-//     - flow balance (from contract/ to contract)
-//     - subscribe(to contract), increment, decrement, unsubscribe
-//     - link to app.superfluid.finance
-//   - shelf link
-//   - toggle dark mode
