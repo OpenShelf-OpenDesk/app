@@ -44,13 +44,20 @@ const Home = () => {
                             Here, you find books not just from the bestselling authors, but from
                             people who have within a writer and dreams to move lives of people.
                         </p>
-                        <div className="pt-2">
+                        <div className="flex space-x-5 pt-2">
                             <button
-                                className="button-od w-3/5 lg:w-1/5"
+                                className="button-od w-1/5"
                                 onClick={() => {
                                     router.push("/opendesk/publish");
                                 }}>
                                 <p className="lg:text-base">Publish</p>
+                            </button>
+                            <button
+                                className="button-od w-1/4"
+                                onClick={() => {
+                                    router.push("/opendesk/createSeries");
+                                }}>
+                                <p className="lg:text-base">Create Series</p>
                             </button>
                         </div>
                     </div>
