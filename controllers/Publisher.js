@@ -98,8 +98,9 @@ export async function launchNewBook(signer, bookDetails, cb) {
         );
         cb(5);
         const transactionStatus = await transaction.wait();
-        console.log(transactionStatus.events);
+        const editionAddress = transactionStatus.events[0].args.editionAddress;
         cb(6);
+        return editionAddress;
     } catch (error) {
         console.error(error);
         if (error.code === 4001) {
