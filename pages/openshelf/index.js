@@ -1,39 +1,85 @@
 import Image from "next/image";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import Layout from "../../components/common/Layout";
+import HomeBookCard from "../../components/openshelf/HomeBookCard";
 import {useThemeContext} from "../../contexts/Theme";
 import {useLoadingContext} from "../../contexts/Loading";
+import {executeQuery} from "../../utils/apolloClient";
 
 const Home = () => {
     const {theme, setTheme} = useThemeContext();
     const {setLoading} = useLoadingContext();
+    const [recentLaunches, setRecentLaunches] = useState([]);
+    const [bestSellers, setBestSellers] = useState([]);
 
     useEffect(() => {
-        setTheme("os");
-        setLoading(false);
-
+        const getData = async () => {
+            setTheme("os");
+            const data1 = await executeQuery(`
+            query{
+                editions(orderBy:revisedOn, orderDirection:desc, first:15){
+                    id
+                    contributions(first:1){
+                        contributor{
+                            id
+                            name
+                        }
+                    }
+                    editionMetadata{
+                        coverPage
+                        title
+                        subtitle
+                        description
+                        genres
+                    }
+                }
+            }`);
+            setRecentLaunches(data1.editions);
+            const data2 = await executeQuery(`
+            query{
+                editions(orderBy:pricedBookPrinted, orderDirection:desc, first:15){
+                    id
+                    contributions(first:1){
+                        contributor{
+                            id
+                            name
+                        }
+                    }
+                    editionMetadata{
+                        coverPage
+                        title
+                        subtitle
+                        description
+                        genres
+                    }
+                }
+            }`);
+            setBestSellers(data2.editions);
+            setLoading(false);
+        };
+        getData();
         return () => {
             setLoading(true);
         };
     }, []);
 
     return (
-        <Layout>
+        <Layout title="OpenShelf">
             <div
-                className={`group z-0 flex h-full w-full items-center justify-center ${
+                className={`group flex h-full w-full items-center justify-center ${
                     theme === "os" ? "bg-os-100" : "bg-od-100"
-                } px-3 py-10 lg:p-20`}>
-                <div className="flex flex-col items-center justify-evenly space-y-10 lg:flex-row lg:space-x-16">
+                } px-3 py-10 lg:py-20 lg:px-32`}>
+                <div className="flex flex-col items-center justify-evenly lg:flex-row lg:space-x-20">
                     <Image
                         src="/undraw_Bookshelves_re_lxoy(animated).svg"
-                        width={300 * 2}
-                        height={200 * 2}
+                        width={300 * 1.5}
+                        height={200 * 1.5}
                         layout="intrinsic"
                         priority={true}
                         alt="OpenShelf Home Image"
                         className="aspect-[300/200]"
                     />
-                    <div className="flex min-h-full flex-1 flex-col content-evenly justify-center space-y-3 px-5 text-gray-700 lg:space-y-7 lg:px-10">
+                    <div className="flex min-h-full flex-1 flex-col content-evenly justify-center space-y-3 text-gray-700 lg:space-y-7 lg:px-10">
                         <p className="text-2xl font-bold lg:text-3xl">
                             Welcome to the realm of digital books
                         </p>
@@ -44,22 +90,22 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-
-            <div className="m-7 lg:mx-10 lg:my-10">
-                <h3 className="text-xl font-bold lg:text-2xl">Recent Launches</h3>
-                <div className="my-5 flex overflow-scroll overscroll-x-contain">
-                    {/* {recentBooks.map((book, index) => {
-                            return <BookCard key={index} book_metadata_uri={book} />;
-                        })} */}
+            <div className="m-7 overflow-hidden lg:mx-10 lg:my-10">
+                <h3 className="text-2xl font-semibold">Best Sellers</h3>
+                <div className="relative my-5 flex snap-both space-x-10 overflow-x-scroll">
+                    {bestSellers &&
+                        bestSellers.map((book, index) => {
+                            return <HomeBookCard key={index} book={book} />;
+                        })}
                 </div>
             </div>
-
-            <div className="m-7 lg:mx-10 lg:my-10">
-                <h3 className="text-xl font-bold lg:text-2xl">Bestselling</h3>
-                <div className="my-5 flex overflow-scroll overscroll-x-contain">
-                    {/* {bestSellerBooks.map((book, index) => {
-                            return <BookCard key={index} book_metadata_uri={book} />;
-                        })} */}
+            <div className="m-7 overflow-hidden lg:mx-10 lg:my-10">
+                <h3 className="text-2xl font-semibold">Recent Launches</h3>
+                <div className="relative my-5 flex snap-both space-x-10 overflow-x-scroll">
+                    {recentLaunches &&
+                        recentLaunches.map((book, index) => {
+                            return <HomeBookCard key={index} book={book} />;
+                        })}
                 </div>
             </div>
         </Layout>
