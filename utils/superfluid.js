@@ -218,7 +218,7 @@ export async function getStream(sf, sender) {
             {take: 1}
         )
         .then(result => {
-            if (result) {
+            if (result.data[0]) {
                 return result.data[0].currentFlowRate;
             }
             return 0;

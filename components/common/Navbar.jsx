@@ -34,7 +34,7 @@ const Navbar = ({isSidebarOpen, signer}) => {
                 />
             </div>
             <button
-                className={`group flex h-10 w-10 items-center justify-center rounded ${
+                className={`group flex h-10 w-10 items-center justify-center rounded bg-white ${
                     theme === "os" ? "os-border-with-shadow" : "od-border-with-shadow"
                 }`}>
                 <BellIconSolid

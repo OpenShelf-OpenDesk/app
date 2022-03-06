@@ -6,7 +6,7 @@ const Dropdown = ({buttonComponent, children}) => {
     const {theme} = useThemeContext();
 
     return (
-        <Menu as="div" className="group relative text-left">
+        <Menu as="div" className="group relative bg-white text-left">
             <Menu.Button
                 className={`flex w-full items-center rounded focus:outline-none ${
                     theme === "os" ? "os-border-with-shadow" : "od-border-with-shadow"
