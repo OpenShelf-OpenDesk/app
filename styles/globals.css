@@ -16,6 +16,7 @@
     }
     body {
         @apply text-gray-700;
+        @apply select-none;
         @apply no-scrollbar;
         @apply text-sm lg:text-base;
         font-family: "Work Sans", sans-serif;
