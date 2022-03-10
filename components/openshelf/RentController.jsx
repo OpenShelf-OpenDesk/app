@@ -225,8 +225,13 @@ const RentController = () => {
                             month: "long",
                             day: "numeric"
                         })}
-                        &nbsp;{Math.abs(new Date(balanceRunOutDate).getHours() - 12)}:
-                        {new Date(balanceRunOutDate).getMinutes()}&nbsp;
+                        &nbsp;
+                        {Math.abs(
+                            new Date(balanceRunOutDate * 1000).getHours() == 12
+                                ? new Date(balanceRunOutDate * 1000).getHours()
+                                : new Date(balanceRunOutDate * 1000).getHours() % 12
+                        )}
+                        :{new Date(balanceRunOutDate).getMinutes()}&nbsp;
                         {new Date(balanceRunOutDate).getHours() >= 12 ? "PM" : "AM"}
                     </div>
                     <div className="mt-5 flex items-center justify-center space-x-3 font-semibold tracking-wider text-black">
