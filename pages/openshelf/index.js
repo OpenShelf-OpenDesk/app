@@ -6,58 +6,14 @@ import {useThemeContext} from "../../contexts/Theme";
 import {useLoadingContext} from "../../contexts/Loading";
 import {executeQuery} from "../../utils/apolloClient";
 
-const Home = () => {
+const Home = ({data}) => {
     const {theme, setTheme} = useThemeContext();
     const {setLoading} = useLoadingContext();
-    const [recentLaunches, setRecentLaunches] = useState([]);
-    const [bestSellers, setBestSellers] = useState([]);
 
     useEffect(() => {
-        const getData = async () => {
-            setTheme("os");
-            const data1 = await executeQuery(`
-            query{
-                editions(orderBy:revisedOn, orderDirection:desc, first:15){
-                    id
-                    contributions(first:1){
-                        contributor{
-                            id
-                            name
-                        }
-                    }
-                    editionMetadata{
-                        coverPage
-                        title
-                        subtitle
-                        description
-                        genres
-                    }
-                }
-            }`);
-            setRecentLaunches(data1.editions);
-            const data2 = await executeQuery(`
-            query{
-                editions(orderBy:pricedBookPrinted, orderDirection:desc, first:15){
-                    id
-                    contributions(first:1){
-                        contributor{
-                            id
-                            name
-                        }
-                    }
-                    editionMetadata{
-                        coverPage
-                        title
-                        subtitle
-                        description
-                        genres
-                    }
-                }
-            }`);
-            setBestSellers(data2.editions);
-            setLoading(false);
-        };
-        getData();
+        console.log(data);
+        setTheme("os");
+        setLoading(false);
         return () => {
             setLoading(true);
         };
@@ -93,8 +49,8 @@ const Home = () => {
             <div className="m-7 overflow-hidden lg:mx-10 lg:my-10">
                 <h3 className="text-2xl font-semibold">Best Sellers</h3>
                 <div className="relative my-5 flex snap-both space-x-10 overflow-x-scroll">
-                    {bestSellers &&
-                        bestSellers.map((book, index) => {
+                    {data.bestSellers &&
+                        data.bestSellers.map((book, index) => {
                             return <HomeBookCard key={index} book={book} />;
                         })}
                 </div>
@@ -102,8 +58,8 @@ const Home = () => {
             <div className="m-7 overflow-hidden lg:mx-10 lg:my-10">
                 <h3 className="text-2xl font-semibold">Recent Launches</h3>
                 <div className="relative my-5 flex snap-both space-x-10 overflow-x-scroll">
-                    {recentLaunches &&
-                        recentLaunches.map((book, index) => {
+                    {data.recentLaunches &&
+                        data.recentLaunches.map((book, index) => {
                             return <HomeBookCard key={index} book={book} />;
                         })}
                 </div>
@@ -113,3 +69,58 @@ const Home = () => {
 };
 
 export default Home;
+
+export async function getServerSideProps(context) {
+    const getData = async () => {
+        const recentLaunches = await executeQuery(`
+            query{
+                editions(orderBy:revisedOn, orderDirection:desc, first:15){
+                    id
+                    contributions(first:1){
+                        contributor{
+                            id
+                            name
+                        }
+                    }
+                    editionMetadata{
+                        coverPage
+                        title
+                        subtitle
+                        description
+                        genres
+                    }
+                }
+            }`);
+
+        const bestSellers = await executeQuery(`
+            query{
+                editions(orderBy:pricedBookPrinted, orderDirection:desc, first:15){
+                    id
+                    contributions(first:1){
+                        contributor{
+                            id
+                            name
+                        }
+                    }
+                    editionMetadata{
+                        coverPage
+                        title
+                        subtitle
+                        description
+                        genres
+                    }
+                }
+            }`);
+        return {recentLaunches: recentLaunches.editions, bestSellers: bestSellers.editions};
+    };
+
+    const data = await getData();
+    if (!data) {
+        return {
+            notFound: true
+        };
+    }
+    return {
+        props: {data}
+    };
+}
