@@ -7,7 +7,7 @@ const Identicon = ({seed = "0x0000000000000000000000000000000000000000", scale, 
     return (
         <div>
             <Blockies
-                seed={seed}
+                seed={"~@" + seed.toLowerCase()}
                 size={10} /* number of squares wide/tall the image will be; default = 15 */
                 scale={scale} /* width/height of each square in pixels; default = 4 */
                 color={theme == "os" ? "#8b5cf6" : "#10b981"} /* normal color; random by default */
