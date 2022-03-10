@@ -36,13 +36,10 @@ const HomeBookCard = ({book}) => {
                         <button
                             className={`button-os h-7 self-end rounded p-1 px-3 text-center text-xs font-semibold text-white`}
                             onClick={() => {
-                                // router.push(
-                                //     {
-                                //         pathname: `/OpenShelf/bookpreview`,
-                                //         query: {bookdata: JSON.stringify(bookMetadata)}
-                                //     },
-                                //     `/OpenShelf/bookpreview`
-                                // );
+                                router.push({
+                                    pathname: `/openshelf/book/[address]`,
+                                    query: {address: book.id}
+                                });
                             }}>
                             More &#10142;
                         </button>
