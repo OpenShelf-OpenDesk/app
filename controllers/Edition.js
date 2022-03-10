@@ -10,12 +10,21 @@ async function callContract(signer, editionAddress, functionToCall, handleError)
     }
 }
 
-export async function buy(signer, editionAddress) {
-    await callContract(signer, editionAddress, async contract => {
-        const transaction = await contract.buy();
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
+export async function buy(signer, editionAddress, price) {
+    await callContract(
+        signer,
+        editionAddress,
+        async contract => {
+            const transaction = await contract.buy({
+                value: price
+            });
+            const transactionStatus = await transaction.wait();
+            console.log(transactionStatus);
+        },
+        error => {
+            console.log(error);
+        }
+    );
 }
 
 export async function transfer(signer, editionAddress, to, copyUid) {
