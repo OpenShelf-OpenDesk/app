@@ -14,6 +14,7 @@ const Home = () => {
     useEffect(() => {
         setTheme("os");
         const getData = async () => {
+            setLoading(true);
             const recentLaunches = await executeQuery(`
             query{
                 editions(orderBy:revisedOn, orderDirection:desc, first:15){

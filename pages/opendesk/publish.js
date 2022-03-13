@@ -72,7 +72,8 @@ const Publish = () => {
     const [selectedBookFile, setSelectedBookFile] = useState();
     const [selectedBookLocalURL, setSelectedBookLocalURL] = useState("");
     const [progressStatus, setProgressStatus] = useState(0);
-    const [validSubmitAttempt, setValidSubmitAttempt] = useState(false);
+    const [validSubmitAttempt, setValidSubmitAttempt] = useState(0);
+    // [0 - false , 1 - true(book Selected), (-1) - No file Selected]
     const [newContributorRole, setNewContributorRole] = useState("");
     const [newContributorAddress, setNewContributorAddress] = useState("");
     const [newContributorShare, setNewContributorShare] = useState("");
@@ -106,7 +107,7 @@ const Publish = () => {
     const handleSubmit = async e => {
         e.preventDefault();
         if (selectedBookFile) {
-            setValidSubmitAttempt(true);
+            setValidSubmitAttempt(1);
             const newBook = {
                 title: e.target.title.value,
                 subTitle: e.target.subtitle.value,
@@ -129,7 +130,7 @@ const Publish = () => {
             }, 1000);
             console.log(newBook);
         } else {
-            setValidSubmitAttempt(false);
+            setValidSubmitAttempt(-1);
         }
     };
 
@@ -156,7 +157,7 @@ const Publish = () => {
                                         onClick={() => {
                                             setSelectedBookFile(null);
                                             setSelectedBookLocalURL("");
-                                            setValidSubmitAttempt(false);
+                                            setValidSubmitAttempt(0);
                                         }}>
                                         <div className="flex cursor-pointer items-center space-x-2 rounded bg-red-200 px-3 py-2 text-sm hover:bg-red-300">
                                             <DocumentRemoveIcon className="h-4 w-4" />
@@ -169,7 +170,7 @@ const Publish = () => {
                                 </>
                             ) : (
                                 <>
-                                    {!validSubmitAttempt && (
+                                    {validSubmitAttempt === -1 && (
                                         <div
                                             className="sticky cursor-pointer"
                                             onClick={() => {

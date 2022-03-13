@@ -4,10 +4,7 @@ import LoadingAnimation from "./LoadingAnimation";
 const ProgressStatus = ({statusTags, status, children}) => {
     return (
         <>
-            <div
-                className={`fixed top-0 flex h-screen w-screen ${
-                    Math.abs(status) > 0 && "blur-md"
-                }`}>
+            <div className={`flex h-full w-screen ${Math.abs(status) > 0 && "blur-md"}`}>
                 {children}
             </div>
             <section

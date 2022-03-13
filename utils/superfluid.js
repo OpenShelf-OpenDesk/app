@@ -20,7 +20,7 @@ export async function initializeSF(web3ModalProvider) {
     return web3ModalSf;
 }
 
-function calculateFlowRate(amountInEther) {
+export function calculateFlowRate(amountInEther) {
     if (typeof Number(amountInEther) !== "number" || isNaN(Number(amountInEther)) === true) {
         console.log(typeof Number(amountInEther));
         alert("You can only calculate a flowRate based on a number");
