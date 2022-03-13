@@ -1,17 +1,18 @@
 import {useRouter} from "next/router";
-import React, {useEffect, useState} from "react";
-import BookCoverPagePreview from "../common/BookCoverPagePreview";
+import PreviewBookCoverPage from "../common/PreviewBookCoverPage";
 import LoadingAnimation from "../common/LoadingAnimation";
+import {useLoadingContext} from "../../contexts/Loading";
 
 const HomeBookCard = ({book}) => {
     const router = useRouter();
+    const {setLoading} = useLoadingContext();
 
     return book ? (
         <div className="group h-80 w-60 snap-start rounded bg-white">
             <div
                 className={`absolute h-72 w-60 origin-bottom-right overflow-visible rounded shadow-md transition duration-500 ease-in-out group-hover:z-10 group-hover:-translate-y-56 group-hover:shadow-xl`}>
                 <div className="h-full w-full bg-white">
-                    <BookCoverPagePreview src={book.editionMetadata.coverPage} />
+                    <PreviewBookCoverPage src={book.editionMetadata.coverPage} />
                 </div>
             </div>
             <div className="h-72 w-60 rounded border-2 border-transparent pt-20 group-hover:border-gray-500">
@@ -36,6 +37,7 @@ const HomeBookCard = ({book}) => {
                         <button
                             className={`button-os h-7 self-end rounded p-1 px-3 text-center text-xs font-semibold text-white`}
                             onClick={() => {
+                                setLoading(true);
                                 router.push({
                                     pathname: `/openshelf/book/[address]`,
                                     query: {address: book.id}
