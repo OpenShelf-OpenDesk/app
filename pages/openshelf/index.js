@@ -6,14 +6,57 @@ import {useThemeContext} from "../../contexts/Theme";
 import {useLoadingContext} from "../../contexts/Loading";
 import {executeQuery} from "../../utils/apolloClient";
 
-const Home = ({data}) => {
+const Home = () => {
     const {theme, setTheme} = useThemeContext();
     const {setLoading} = useLoadingContext();
+    const [data, setData] = useState({});
 
     useEffect(() => {
-        console.log(data);
         setTheme("os");
-        setLoading(false);
+        const getData = async () => {
+            const recentLaunches = await executeQuery(`
+            query{
+                editions(orderBy:revisedOn, orderDirection:desc, first:15){
+                    id
+                    contributions(first:1){
+                        contributor{
+                            id
+                            name
+                        }
+                    }
+                    editionMetadata{
+                        coverPage
+                        title
+                        subtitle
+                        description
+                        genres
+                    }
+                }
+            }`);
+
+            const bestSellers = await executeQuery(`
+            query{
+                editions(orderBy:pricedBookPrinted, orderDirection:desc, first:15){
+                    id
+                    contributions(first:1){
+                        contributor{
+                            id
+                            name
+                        }
+                    }
+                    editionMetadata{
+                        coverPage
+                        title
+                        subtitle
+                        description
+                        genres
+                    }
+                }
+            }`);
+            setData({recentLaunches: recentLaunches.editions, bestSellers: bestSellers.editions});
+            setLoading(false);
+        };
+        getData();
         return () => {
             setLoading(true);
         };
@@ -69,58 +112,3 @@ const Home = ({data}) => {
 };
 
 export default Home;
-
-export async function getServerSideProps(context) {
-    const getData = async () => {
-        const recentLaunches = await executeQuery(`
-            query{
-                editions(orderBy:revisedOn, orderDirection:desc, first:15){
-                    id
-                    contributions(first:1){
-                        contributor{
-                            id
-                            name
-                        }
-                    }
-                    editionMetadata{
-                        coverPage
-                        title
-                        subtitle
-                        description
-                        genres
-                    }
-                }
-            }`);
-
-        const bestSellers = await executeQuery(`
-            query{
-                editions(orderBy:pricedBookPrinted, orderDirection:desc, first:15){
-                    id
-                    contributions(first:1){
-                        contributor{
-                            id
-                            name
-                        }
-                    }
-                    editionMetadata{
-                        coverPage
-                        title
-                        subtitle
-                        description
-                        genres
-                    }
-                }
-            }`);
-        return {recentLaunches: recentLaunches.editions, bestSellers: bestSellers.editions};
-    };
-
-    const data = await getData();
-    if (!data) {
-        return {
-            notFound: true
-        };
-    }
-    return {
-        props: {data}
-    };
-}
