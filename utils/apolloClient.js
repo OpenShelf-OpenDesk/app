@@ -13,10 +13,10 @@ export async function executeQuery(query) {
             query: gql(query)
         })
         .then(data => {
-            console.log("Data fetched from Subgraph!", data);
+            console.log("Query executed successfully!");
             return data.data;
         })
         .catch(error => {
-            console.log("Error fetching data: ", error);
+            console.log("Error while executing query: ", error);
         });
 }
