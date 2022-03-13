@@ -74,7 +74,6 @@ const RentController = () => {
 
             setSuperTokenBalance(balance);
             if (!on) {
-                console.log("clear interval");
                 clearInterval(intervalId);
                 return;
             }
@@ -190,7 +189,17 @@ const RentController = () => {
                             <span className="text-center text-sm">
                                 Flow Balance
                                 <br />
-                                (MATICx)
+                                <span className="w-min">
+                                    <img
+                                        className="inline"
+                                        src="/matic.svg"
+                                        height={14}
+                                        width={14}
+                                    />
+                                    <span className="text-xs">
+                                        <span className="align-sub">x</span>&nbsp;/&nbsp;month
+                                    </span>
+                                </span>
                             </span>
                         </div>
                         <div className="flex h-full w-full flex-col items-center justify-between">
@@ -206,9 +215,15 @@ const RentController = () => {
                                 {Number(new BigNumber(superTokenBalance).shiftedBy(-18)).toFixed(4)}
                             </div>
                             <span className="text-center text-sm">
-                                MATICx
-                                <br />
-                                Balance
+                                <span className="w-min">
+                                    <img
+                                        className="inline"
+                                        src="/matic.svg"
+                                        height={14}
+                                        width={14}
+                                    />
+                                </span>
+                                <span className="align-sub">x</span>&nbsp;Balance
                             </span>
                         </div>
                     </div>
