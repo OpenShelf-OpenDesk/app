@@ -10,7 +10,8 @@ async function callContract(signer, editionAddress, functionToCall, handleError)
     }
 }
 
-export async function buy(signer, editionAddress, price) {
+export async function buy(signer, editionAddress, price, cb) {
+    cb(1);
     await callContract(
         signer,
         editionAddress,
@@ -18,11 +19,20 @@ export async function buy(signer, editionAddress, price) {
             const transaction = await contract.buy({
                 value: price
             });
+            cb(2);
             const transactionStatus = await transaction.wait();
+            cb(3);
             console.log(transactionStatus);
+            setTimeout(() => {
+                cb(4);
+            }, 1000);
         },
-        error => {
-            console.log(error);
+        async error => {
+            if (error.code === 4001) {
+                cb(-2);
+            } else {
+                cb(-3);
+            }
         }
     );
 }
@@ -36,9 +46,16 @@ export async function transfer(signer, editionAddress, to, copyUid) {
 }
 
 export async function uri(signer, editionAddress, copyUid) {
-    return await callContract(signer, editionAddress, async contract => {
-        return await contract.uri(copyUid);
-    });
+    return await callContract(
+        signer,
+        editionAddress,
+        async contract => {
+            return await contract.uri(copyUid);
+        },
+        err => {
+            console.log(err);
+        }
+    );
 }
 
 export async function redeem(signer, editionAddress, voucher) {
@@ -56,23 +73,30 @@ export async function verifyOwnership(signer, editionAddress, owner, copyUid, di
 }
 
 export async function lockWith(signer, editionAddress, to, copyUid) {
-    await callContract(signer, editionAddress, async contract => {
-        const transaction = await contract.lockWith(to, copyUid);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
+    await callContract(
+        signer,
+        editionAddress,
+        async contract => {
+            const transaction = await contract.lockWith(to, copyUid);
+            const transactionStatus = await transaction.wait();
+            console.log(transactionStatus);
+        },
+        err => {
+            console.log(err);
+        }
+    );
 }
 
-export async function updateSellingPrice(signer, editionAddress, copyUid, newSellingPrice) {
-    await callContract(signer, editionAddress, async contract => {
-        const transaction = await contract.updateSellingPrice(
-            copyUid,
-            ethers.utils.parseUnits(newSellingPrice.toString(), "ether")
-        );
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
-}
+// export async function updateSellingPrice(signer, editionAddress, copyUid, newSellingPrice) {
+//     await callContract(signer, editionAddress, async contract => {
+//         const transaction = await contract.updateSellingPrice(
+//             copyUid,
+//             ethers.utils.parseUnits(newSellingPrice.toString(), "ether")
+//         );
+//         const transactionStatus = await transaction.wait();
+//         console.log(transactionStatus);
+//     });
+// }
 
 // called only by Rentor Contract Address
 // export async function unlock(signer, editionAddress, copyUid) {
