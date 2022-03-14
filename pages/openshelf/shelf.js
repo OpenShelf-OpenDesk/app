@@ -2,6 +2,7 @@ import {useEffect} from "react";
 import Layout from "../../components/common/Layout";
 import Tabs from "../../components/common/Tabs";
 import OwnedBooks from "../../components/openshelf/shelf/OwnedBooks";
+import RentedBooks from "../../components/openshelf/shelf/RentedBooks";
 import {useLoadingContext} from "../../contexts/Loading";
 import {useThemeContext} from "../../contexts/Theme";
 
@@ -25,7 +26,7 @@ const Shelf = () => {
                         tabs={["Owned", "Rented", "Distributed"]}
                         panels={[
                             <OwnedBooks key={1} />,
-                            <OwnedBooks key={2} />,
+                            <RentedBooks key={2} />,
                             <OwnedBooks key={3} />
                         ]}
                     />

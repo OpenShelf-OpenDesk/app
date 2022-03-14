@@ -78,7 +78,6 @@ const RentController = () => {
                 return;
             }
             if (on && netFlow != 0) {
-                console.log("3", toggle, toggled, loading);
                 netFlow = netFlow / 100;
                 const id = setInterval(() => {
                     setSuperTokenBalance(state => {

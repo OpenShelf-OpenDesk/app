@@ -43,7 +43,6 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                             subtitle
                             description
                             coverPage
-                            currency
                         }
                     }
                     rentRecord{
@@ -66,7 +65,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
             setLoading(false);
         };
         getData();
-    }, []);
+    }, [owner, copyUid, editionId]);
 
     useEffect(() => {
         if ((rentRecords && rentRecords.length > 0) || (copy && copy.rentRecord)) {
@@ -167,7 +166,12 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                         .toFixed(3)}
                                 </span>
                                 <span>
-                                    <img src="/matic.svg" height={14} width={14} />
+                                    <img
+                                        src="/matic.svg"
+                                        height={14}
+                                        width={14}
+                                        alt="Matic Token Symbol"
+                                    />
                                 </span>
                             </div>
                         </div>
@@ -228,6 +232,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                             src="/matic.svg"
                                             height={14}
                                             width={14}
+                                            alt="Matic Token Symbol"
                                         />
                                         <span className="text-xs">
                                             <span className="align-sub">x</span>/month
@@ -245,7 +250,12 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                     <span>0.00</span>
                                 )}
                                 <span>
-                                    <img src="/matic.svg" height={14} width={14} />
+                                    <img
+                                        src="/matic.svg"
+                                        height={14}
+                                        width={14}
+                                        alt="Matic Token Symbol"
+                                    />
                                 </span>
                             </div>
                         </div>

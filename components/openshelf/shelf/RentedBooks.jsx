@@ -1,13 +1,13 @@
 import {executeQuery} from "../../../utils/apolloClient";
 import {useEffect, useState} from "react";
 import {useSignerContext} from "../../../contexts/Signer";
-import OwnedBookCard from "./OwnedBookCard";
 import Image from "next/image";
 import LoadingAnimation from "../../common/LoadingAnimation";
+import RentedBookCard from "./RentedBookCard";
 
-const OwnedBooks = () => {
+const RentedBooks = () => {
     const {signer} = useSignerContext();
-    const [ownedBooks, setOwnedBooks] = useState([]);
+    const [rentedBooks, setRentedBooks] = useState([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -15,14 +15,11 @@ const OwnedBooks = () => {
             setLoading(true);
             const bookData = await executeQuery(`
             query{
-                copies(where:{owner: "${signer.address.toLowerCase()}"}, orderBy: purchasedOn, orderDirection: desc){
-                    copyUid
-                    edition{
-                        id
-                    }
+                rentRecords(where:{rentedTo: "${signer.address.toLowerCase()}", rentEndDate:null}, orderBy:rentStartDate, orderDirection:desc){
+                  id
                 }
-            }`);
-            setOwnedBooks(bookData.copies);
+              }`);
+            setRentedBooks(bookData.rentRecords);
             setLoading(false);
         };
         getData();
@@ -34,14 +31,13 @@ const OwnedBooks = () => {
     return (
         <div className="h-screen w-full rounded bg-os-500/[0.05] p-10">
             {!loading ? (
-                ownedBooks.length > 0 ? (
+                rentedBooks.length > 0 ? (
                     <div className="grid grid-cols-3 gap-10">
-                        {ownedBooks.map((copy, index) => {
+                        {rentedBooks.map((copy, index) => {
                             return (
-                                <OwnedBookCard
+                                <RentedBookCard
                                     key={index}
-                                    editionId={copy.edition.id}
-                                    copyUid={copy.copyUid}
+                                    id={copy.id}
                                     owner={signer.address.toLowerCase()}
                                 />
                             );
@@ -71,4 +67,4 @@ const OwnedBooks = () => {
     );
 };
 
-export default OwnedBooks;
+export default RentedBooks;
