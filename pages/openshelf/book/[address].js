@@ -14,11 +14,12 @@ import {buy} from "../../../controllers/Edition";
 import ProgressStatus from "../../../components/common/ProgressStatus";
 import {takeOnRent} from "../../../controllers/Rentor";
 
-const DynamicAddressPage = ({data}) => {
+const DynamicAddressPage = () => {
     const {setTheme} = useThemeContext();
     const {loading, setLoading} = useLoadingContext();
     const {signer} = useSignerContext();
     const router = useRouter();
+    const {address} = router.query;
     const [req, setReq] = useState(false);
     const [edition, setEdition] = useState({});
     const [rentData, setRentData] = useState([]);
@@ -31,10 +32,8 @@ const DynamicAddressPage = ({data}) => {
     };
 
     useEffect(() => {
-        setLoading(true);
         setTheme("os");
         const getData = async () => {
-            const address = router.query.address;
             console.log(address);
             const editionData = await executeQuery(`
             query{
@@ -80,15 +79,16 @@ const DynamicAddressPage = ({data}) => {
                 setLoading(false);
             }, 1000);
         };
-
-        getData();
+        if (address) {
+            getData();
+        }
         return () => {
             setLoading(true);
         };
-    }, []);
+    }, [address]);
 
-    return !loading ? (
-        Object.keys(edition).length && (
+    return (
+        !loading && (
             <ProgressStatus status={progressStatus} statusTags={statusTags}>
                 <Layout>
                     <div className="mx-auto h-full w-full px-36 py-7">
@@ -381,8 +381,6 @@ const DynamicAddressPage = ({data}) => {
                 </Layout>
             </ProgressStatus>
         )
-    ) : (
-        <span>Error</span>
     );
 };
 

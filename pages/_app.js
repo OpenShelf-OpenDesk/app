@@ -11,7 +11,7 @@ import {initializeSF} from "../utils/superfluid";
 
 function MyApp({Component, pageProps}) {
     const [theme, setTheme] = useState("os");
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [isSwitchModalOpen, setIsSwitchModalOpen] = useState(false);
     const [isConnectModalOpen, setIsConnectModalOpen] = useState(false);
     const [network, setNetwork] = useState(undefined);
