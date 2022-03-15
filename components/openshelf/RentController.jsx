@@ -42,7 +42,7 @@ const RentController = () => {
         setToggled(false);
         setLoading(true);
         try {
-            await updateSubscription(superfluidFramework, signer, Number(outFlowBalance) + 1);
+            await updateSubscription(superfluidFramework, signer, Number(outFlowBalance) + 5);
             await updateFlowBalance(() => {
                 setLoading(false);
                 setToggled(true);
@@ -129,7 +129,7 @@ const RentController = () => {
                 if (!toggled && toggle) {
                     if (Number(new BigNumber(superTokenBalance).shiftedBy(-18)).toFixed(4) >= 0.5) {
                         setLoading(true);
-                        await subscribe(superfluidFramework, signer, 1);
+                        await subscribe(superfluidFramework, signer, 5);
                         await updateSuperTokenBalance(true);
                         await updateFlowBalance(() => {
                             setLoading(false);
