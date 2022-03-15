@@ -24,68 +24,75 @@ const DynamicAddressPage = () => {
     const [edition, setEdition] = useState({});
     const [rentData, setRentData] = useState([]);
     const [progressStatus, setProgressStatus] = useState(0);
+    const [refresh, setRefresh] = useState(1);
+    const [refreshStatus, setRefreshStatus] = useState(false);
 
-    const statusTags = ["Request Initiated", "Minting Your Copy", "Transaction Successful"];
+    const statusTags = ["Request Initiated", "Printing Your Copy", "Transaction Successful"];
 
     const setProgressStatusCB = statusCode => {
         setProgressStatus(statusCode);
     };
+    const getData = async () => {
+        const editionData = await executeQuery(`
+        query{
+            edition(id: "${address}"){
+                id
+                bookId
+                editionMetadata{
+                    title
+                    subtitle
+                    description
+                    coverPage
+                    copyrights
+                    language
+                    genres
+                    keywords
+                }
+                price
+                royalty
+                supplyLimited
+                pricedBookSupplyLimit
+                pricedBookPrinted
+                revisedOn
+                contributions(orderBy:share, orderDirection:desc){
+                    role
+                    contributor{
+                        id
+                        name
+                    }
+                }
+            }
+        }`);
+        const rentRecords = await executeQuery(`
+        query{
+            rentRecords (where:{edition: "${address}", rentedTo : null}, orderBy: flowRate, orderDirection:asc){
+              copyUid
+              flowRate
+            }
+        }`);
+        setEdition(editionData.edition);
+        setRentData(rentRecords.rentRecords);
+        setTimeout(() => {
+            !refreshStatus && setLoading(false);
+            refreshStatus && setRefreshStatus(false);
+        }, 1000);
+    };
 
     useEffect(() => {
         setTheme("os");
-        const getData = async () => {
-            console.log(address);
-            const editionData = await executeQuery(`
-            query{
-                edition(id: "${address}"){
-                    id
-                    bookId
-                    editionMetadata{
-                        title
-                        subtitle
-                        description
-                        coverPage
-                        copyrights
-                        language
-                        genres
-                        keywords
-                    }
-                    price
-                    royalty
-                    supplyLimited
-                    pricedBookSupplyLimit
-                    pricedBookPrinted
-                    revisedOn
-                    contributions(orderBy:share, orderDirection:desc){
-                        role
-                        contributor{
-                            id
-                            name
-                        }
-                    }
-                }
-            }`);
-            const rentData = await executeQuery(`
-            query{
-                copies (where:{edition: "${address}", onRent: true, rentRecord: null}, orderBy: flowRate, orderDirection:asc){
-                  copyUid
-                  flowRate
-                }
-            }`);
-
-            setEdition(editionData.edition);
-            setRentData(rentData.copies);
-            setTimeout(() => {
-                setLoading(false);
-            }, 1000);
-        };
         if (address) {
             getData();
         }
         return () => {
-            setLoading(true);
+            !refreshStatus && setLoading(true);
         };
     }, [address]);
+
+    useEffect(() => {
+        if (address) {
+            getData();
+        }
+    }, [refresh]);
 
     return (
         !loading && (
@@ -162,10 +169,16 @@ const DynamicAddressPage = () => {
                                         </div>
                                         <div className="group cursor-pointer">
                                             <RefreshIcon
-                                                className="absolute h-5 w-5 text-os-500 transition duration-200 ease-in-out group-hover:rotate-180"
+                                                className={`absolute h-5 w-5 text-os-500 transition duration-200 ease-in-out ${
+                                                    refreshStatus
+                                                        ? "animate-spin"
+                                                        : "group-hover:rotate-180"
+                                                }`}
                                                 onClick={() => {
-                                                    setLoading(true);
-                                                    router.reload();
+                                                    setRefreshStatus(true);
+                                                    setRefresh(state => {
+                                                        return state + 1;
+                                                    });
                                                 }}
                                             />
                                         </div>
