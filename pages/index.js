@@ -1,4 +1,4 @@
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import Identicon from "../components/common/Identicon";
 import ChipInputField from "../components/common/ChipInputField";
 import Wallet from "../components/common/Wallet";
@@ -35,6 +35,12 @@ export default function Home() {
     const [selected, setSelected] = useState(options[0]);
     const {setLoading} = useLoadingContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    useEffect(() => {
+        setLoading(false);
+        return () => {
+            setLoading(true);
+        };
+    }, []);
     return (
         <Layout>
             <div>

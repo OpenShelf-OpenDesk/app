@@ -2,10 +2,41 @@ import {useRouter} from "next/router";
 import PreviewBookCoverPage from "../common/PreviewBookCoverPage";
 import LoadingAnimation from "../common/LoadingAnimation";
 import {useLoadingContext} from "../../contexts/Loading";
+import {useEffect, useState} from "react";
+import {executeQuery} from "../../utils/apolloClient";
 
-const HomeBookCard = ({book}) => {
+const HomeBookCard = ({id}) => {
     const router = useRouter();
+    const [book, setBook] = useState();
     const {setLoading} = useLoadingContext();
+
+    useEffect(() => {
+        const getData = async () => {
+            const bookData = await executeQuery(`
+            query{
+                edition(id: "${id}"){
+                    contributions(first:1){
+                        contributor{
+                            id
+                            name
+                        }
+                    }
+                    editionMetadata{
+                        coverPage
+                        title
+                        subtitle
+                        description
+                        genres
+                    }
+                }
+            }`);
+            setBook(bookData.edition);
+            setLoading(false);
+        };
+        if (id) {
+            getData();
+        }
+    }, [id]);
 
     return book ? (
         <div className="group h-80 w-60 snap-start rounded bg-white">
@@ -40,7 +71,7 @@ const HomeBookCard = ({book}) => {
                                 setLoading(true);
                                 router.push({
                                     pathname: `/openshelf/book/[address]`,
-                                    query: {address: book.id}
+                                    query: {address: id}
                                 });
                             }}>
                             More &#10142;

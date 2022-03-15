@@ -14,24 +14,10 @@ const Home = () => {
     useEffect(() => {
         setTheme("os");
         const getData = async () => {
-            setLoading(true);
             const recentLaunches = await executeQuery(`
             query{
                 editions(orderBy:revisedOn, orderDirection:desc, first:15){
                     id
-                    contributions(first:1){
-                        contributor{
-                            id
-                            name
-                        }
-                    }
-                    editionMetadata{
-                        coverPage
-                        title
-                        subtitle
-                        description
-                        genres
-                    }
                 }
             }`);
 
@@ -39,19 +25,6 @@ const Home = () => {
             query{
                 editions(orderBy:pricedBookPrinted, orderDirection:desc, first:15){
                     id
-                    contributions(first:1){
-                        contributor{
-                            id
-                            name
-                        }
-                    }
-                    editionMetadata{
-                        coverPage
-                        title
-                        subtitle
-                        description
-                        genres
-                    }
                 }
             }`);
             setData({recentLaunches: recentLaunches.editions, bestSellers: bestSellers.editions});
@@ -95,7 +68,7 @@ const Home = () => {
                 <div className="relative my-5 flex snap-both space-x-10 overflow-x-scroll">
                     {data.bestSellers &&
                         data.bestSellers.map((book, index) => {
-                            return <HomeBookCard key={index} book={book} />;
+                            return <HomeBookCard key={index} id={book.id} />;
                         })}
                 </div>
             </div>
@@ -104,7 +77,7 @@ const Home = () => {
                 <div className="relative my-5 flex snap-both space-x-10 overflow-x-scroll">
                     {data.recentLaunches &&
                         data.recentLaunches.map((book, index) => {
-                            return <HomeBookCard key={index} book={book} />;
+                            return <HomeBookCard key={index} id={book.id} />;
                         })}
                 </div>
             </div>
