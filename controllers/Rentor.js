@@ -26,11 +26,17 @@ export async function putOnRent(signer, bookAddress, copyUid, flowRate) {
 }
 
 export async function removeFromRent(signer, bookAddress, copyUid) {
-    await callContract(signer, async contract => {
-        const transaction = await contract.removeFromRent(bookAddress, copyUid);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
+    await callContract(
+        signer,
+        async contract => {
+            const transaction = await contract.removeFromRent(bookAddress, copyUid);
+            const transactionStatus = await transaction.wait();
+            console.log(transactionStatus);
+        },
+        err => {
+            console.log(err);
+        }
+    );
 }
 
 export async function takeOnRent(signer, bookAddress, copyUid) {
@@ -48,17 +54,29 @@ export async function takeOnRent(signer, bookAddress, copyUid) {
 }
 
 export async function returnBook(signer, bookAddress, copyUid) {
-    await callContract(signer, async contract => {
-        const transaction = await contract.returnBook(bookAddress, copyUid);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
+    await callContract(
+        signer,
+        async contract => {
+            const transaction = await contract.returnBook(bookAddress, copyUid);
+            const transactionStatus = await transaction.wait();
+            console.log(transactionStatus);
+        },
+        err => {
+            console.log(err);
+        }
+    );
 }
 
 export async function uri(signer, bookAddress, copyUid) {
-    return await callContract(signer, async contract => {
-        return await contract.uri(bookAddress, copyUid);
-    });
+    return await callContract(
+        signer,
+        async contract => {
+            return await contract.uri(bookAddress, copyUid);
+        },
+        err => {
+            console.log(err);
+        }
+    );
 }
 
 // export async function addToWaitingList(signer, bookAddress, copyUid) {

@@ -4,19 +4,22 @@ import PreviewBookCoverPage from "../../common/PreviewBookCoverPage";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import BigNumber from "bignumber.js";
 import {useSignerContext} from "../../../contexts/Signer";
+import {returnBook} from "../../../controllers/Rentor";
 
 const RentedBookCard = ({id}) => {
     const {signer} = useSignerContext();
     const [copy, setCopy] = useState();
+    const [intervalId, setIntervalId] = useState(0);
     const [loading, setLoading] = useState(true);
+    const [totalRentPaid, setTotalRentPaid] = useState();
 
     useEffect(() => {
         const getData = async () => {
-            const book = await executeQuery(`
+            const rentRecordData = await executeQuery(`
             query{
-                rentRecords(id: "${id}"){
+                rentRecord(id: "${id}"){
                   flowRate
-                  copyId
+                  copyUid
                   edition{
                     id
                     contributions(orderBy:share, orderDirection:desc, first:1){
@@ -36,11 +39,38 @@ const RentedBookCard = ({id}) => {
                   rentStartDate
                 }
               }`);
-            setCopy(book.rentRecords[0]);
+            setCopy(rentRecordData.rentRecord);
             setLoading(false);
         };
         getData();
     }, [signer, id]);
+
+    useEffect(() => {
+        copy && calculateTotalRentPaid(true);
+        return () => {
+            calculateTotalRentPaid(false);
+        };
+    }, [copy]);
+
+    const calculateTotalRentPaid = async on => {
+        if (!on) {
+            clearInterval(intervalId);
+            return;
+        }
+        let flowRate = copy.flowRate / 1000;
+        const currentOutFlowSoFar = flowRate * (new Date().getTime() - copy.rentStartDate * 1000);
+        setTotalRentPaid(currentOutFlowSoFar);
+
+        if (on) {
+            const id = setInterval(() => {
+                setTotalRentPaid(state => {
+                    const x = state + flowRate * 100;
+                    return x;
+                });
+            }, 100);
+            setIntervalId(id);
+        }
+    };
 
     return !loading ? (
         <div className="group h-[300px] snap-start rounded bg-transparent">
@@ -74,39 +104,21 @@ const RentedBookCard = ({id}) => {
                 <div className="flex h-full flex-1 flex-col justify-between space-y-3 py-7 px-10">
                     <div className="flex h-full flex-col items-center justify-center space-y-3">
                         <div className="flex w-full items-center justify-between">
-                            <span className="text-xs font-medium">Purchased On</span>
-                            <div className="rounded py-0.5 font-mono text-base font-semibold">
-                                {new Date(parseInt(copy.rentStartDate) * 1000).toLocaleString(
-                                    "en-US",
-                                    {
-                                        year: "numeric",
-                                        month: "numeric",
-                                        day: "numeric"
-                                    }
+                            <span className="text-xs font-medium">Rent Started On</span>
+                            <div className="rounded py-0.5 text-right font-mono text-base font-semibold">
+                                {new Date(copy.rentStartDate * 1000).toLocaleString("en-US", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric"
+                                })}
+                                &nbsp;
+                                {Math.abs(
+                                    new Date(copy.rentStartDate * 1000).getHours() == 12
+                                        ? new Date(copy.rentStartDate * 1000).getHours()
+                                        : new Date(copy.rentStartDate * 1000).getHours() % 12
                                 )}
-                            </div>
-                        </div>
-                        <div className="flex w-full items-center justify-between">
-                            <span className="text-xs font-medium">Total Rent Paid</span>
-                            <div className="flex items-center space-x-2 rounded font-mono text-base font-semibold">
-                                <span>
-                                    {new BigNumber(
-                                        parseInt(
-                                            copy.flowRate *
-                                                (new Date().getTime() / 1000 - copy.rentStartDate)
-                                        )
-                                    )
-                                        .shiftedBy(-18)
-                                        .toFixed(5)}
-                                </span>
-                                <span>
-                                    <img
-                                        src="/matic.svg"
-                                        height={14}
-                                        width={14}
-                                        alt="Matic Token Symbol"
-                                    />
-                                </span>
+                                :{new Date(copy.rentStartDate * 1000).getMinutes()}&nbsp;
+                                {new Date(copy.rentStartDate * 1000).getHours() >= 12 ? "PM" : "AM"}
                             </div>
                         </div>
                         <div className="flex w-full items-center justify-between">
@@ -131,65 +143,44 @@ const RentedBookCard = ({id}) => {
                                 </span>
                             </div>
                         </div>
+                        <div className="flex w-full items-center justify-between">
+                            <span className="text-xs font-medium">Total Rent Paid</span>
+                            <div className="flex items-center space-x-2 rounded font-mono text-base font-semibold">
+                                <span>
+                                    {new BigNumber(parseInt(totalRentPaid))
+                                        .shiftedBy(-18)
+                                        .toFixed(8)}
+                                </span>
+                                <span>
+                                    <img
+                                        src="/matic.svg"
+                                        height={14}
+                                        width={14}
+                                        alt="Matic Token Symbol"
+                                    />
+                                </span>
+                            </div>
+                        </div>
                     </div>
-                    {/* <div className="invisible flex justify-between space-x-2 opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100">
-                        {copy.onRent ? (
-                            copy.rentRecord ? (
-                                <div className="w-full cursor-pointer rounded border border-gray-400/50 bg-gray-100 py-0.5 px-3 text-center text-sm font-semibold text-gray-400">
-                                    On Rent
-                                </div>
-                            ) : (
-                                <>
-                                    <button className="button-os bg-orange-400 px-3 text-xs hover:bg-orange-500">
-                                        Remove From Rent
-                                    </button>
-                                    <button
-                                        className="button-od bg-gray-600 px-3 text-xs hover:bg-gray-700"
-                                        onClick={() => {
-                                            router.push({
-                                                pathname: `/openshelf/bookReader`,
-                                                query: {editionAddress: editionId, copyUid: copyUid}
-                                            });
-                                        }}>
-                                        Read
-                                    </button>
-                                </>
-                            )
-                        ) : (
-                            <>
-                                <button
-                                    className="button-os bg-orange-400 px-4 text-xs hover:bg-orange-500"
-                                    onClick={async () => {
-                                        await lockWith(
-                                            signer.signer,
-                                            editionId,
-                                            contractAddresses.rentor,
-                                            copyUid
-                                        );
-                                        await putOnRent(
-                                            signer.signer,
-                                            editionId,
-                                            copyUid,
-                                            calculateFlowRate(
-                                                new BigNumber(newFlowRate).shiftedBy(-18)
-                                            )
-                                        );
-                                    }}>
-                                    Put On Rent
-                                </button>
-                                <button
-                                    className="button-od bg-gray-600 px-3 text-xs hover:bg-gray-700"
-                                    onClick={() => {
-                                        router.push({
-                                            pathname: `/openshelf/bookReader`,
-                                            query: {editionAddress: editionId, copyUid: copyUid}
-                                        });
-                                    }}>
-                                    Read
-                                </button>
-                            </>
-                        )}
-                    </div> */}
+                    <div className="invisible flex justify-between space-x-2 opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100">
+                        <button
+                            className="button-os bg-orange-400 px-4 text-xs hover:bg-orange-500"
+                            onClick={async () => {
+                                await returnBook(signer.signer, copy.edition.id, copy.copyUid);
+                            }}>
+                            Return Book
+                        </button>
+                        <button
+                            className="button-od bg-gray-600 px-3 text-xs hover:bg-gray-700"
+                            onClick={() => {
+                                router.push({
+                                    pathname: `/openshelf/bookReader`,
+                                    query: {editionAddress: copy.edition.id, copyUid: copy.copyUid}
+                                });
+                            }}>
+                            Read
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

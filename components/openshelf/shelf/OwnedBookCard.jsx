@@ -3,7 +3,7 @@ import {executeQuery} from "../../../utils/apolloClient";
 import PreviewBookCoverPage from "../../common/PreviewBookCoverPage";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import BigNumber from "bignumber.js";
-import {putOnRent} from "../../../controllers/Rentor";
+import {putOnRent, removeFromRent} from "../../../controllers/Rentor";
 import {lockWith} from "../../../controllers/Edition";
 import contractAddresses from "../../../contracts/addresses.json";
 import {CheckIcon, PencilAltIcon} from "@heroicons/react/solid";
@@ -13,7 +13,7 @@ import {useSignerContext} from "../../../contexts/Signer";
 const OwnedBookCard = ({editionId, copyUid, owner}) => {
     const {signer} = useSignerContext();
     const [copy, setCopy] = useState();
-    const [rentRecords, setRentRecords] = useState();
+    const [rentRecords, setRentRecords] = useState([]);
     const [loading, setLoading] = useState(true);
     const [totalRentRevenue, setTotalRentRevenue] = useState(0);
     const [intervalId, setIntervalId] = useState(0);
@@ -47,13 +47,13 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                     }
                     rentRecord{
                     	rentStartDate
+                        rentEndDate
                     	flowRate
                     }
                     onRent
                     flowRate
                 }
-                rentRecords(where: {rentedFrom: "${owner}", copyId: "${copyUid}", edition: "${editionId}", rentEndDate_not: null}){
-                    id
+                rentRecords(where: { edition: "${editionId}",  copyUid: "${copyUid}", rentedFrom: "${owner}", rentEndDate_not: null}){
                     flowRate
     				rentStartDate
     				rentEndDate
@@ -68,22 +68,26 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
     }, [owner, copyUid, editionId]);
 
     useEffect(() => {
-        if ((rentRecords && rentRecords.length > 0) || (copy && copy.rentRecord)) {
+        console.log(copy, rentRecords);
+        if (rentRecords.length > 0) {
             calculateTotalRentRevenue();
         }
         if (copy) {
-            copy.onRent && copy.rentRecord && calculateCurrentRentRevenue(true);
+            copy.onRent &&
+                copy.rentRecord.rentStartDate &&
+                !copy.rentEndDate &&
+                calculateCurrentRentRevenue(true);
         }
-    }, []);
+        console.log(totalRentRevenue);
+    }, [copy, rentRecords]);
 
     const calculateTotalRentRevenue = () => {
         let rentRevenue = 0;
         for (let i = 0; i < rentRecords.length; i++) {
             rentRevenue +=
-                (parseInt(rentRecords[i].rentEndDate) - parseInt(rentRecords[i].rentStartDate)) *
+                (rentRecords[i].rentEndDate - rentRecords[i].rentStartDate) *
                 rentRecords[i].flowRate;
         }
-        rentRevenue = new BigNumber(parseInt(rentRevenue)).shiftedBy(-18).toFixed(3);
         setTotalRentRevenue(rentRevenue);
     };
 
@@ -92,23 +96,20 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
             clearInterval(intervalId);
             return;
         }
-        let flowRate = copy.rentRecord.flowRate;
+        let flowRate = copy.rentRecord.flowRate / 1000;
         const currentInFlowSoFar =
-            ((parseInt(copy.rentRecord.rentEndDate * 1000) - new Date().getTime()) / 1000) *
-            flowRate;
-
+            (new Date().getTime() - copy.rentRecord.rentStartDate * 1000) * flowRate;
         setTotalRentRevenue(state => {
-            return Number(state) + Number(currentInFlowSoFar);
+            return currentInFlowSoFar;
         });
 
-        if (on && currentInFlowSoFar != 0) {
-            flowRate = flowRate / 100;
+        if (on) {
             const id = setInterval(() => {
                 setTotalRentRevenue(state => {
-                    const x = Number(state) + Number(flowRate);
+                    const x = state + flowRate * 100;
                     return x;
                 });
-            }, 10);
+            }, 100);
             setIntervalId(id);
         }
     };
@@ -244,11 +245,11 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                         <div className="flex w-full items-center justify-between">
                             <span className="text-xs font-medium">Rental Revenue</span>
                             <div className="flex items-center space-x-2 rounded font-mono text-base font-semibold">
-                                {rentRecords.length > 0 || copy.rentRecord ? (
-                                    <span>{totalRentRevenue}</span>
-                                ) : (
-                                    <span>0.00</span>
-                                )}
+                                <span>
+                                    {new BigNumber(parseInt(totalRentRevenue))
+                                        .shiftedBy(-18)
+                                        .toFixed(8)}
+                                </span>
                                 <span>
                                     <img
                                         src="/matic.svg"
@@ -262,13 +263,17 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                     </div>
                     <div className="invisible flex justify-between space-x-2 opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100">
                         {copy.onRent ? (
-                            copy.rentRecord ? (
+                            !copy.rentRecord.rentEndDate ? (
                                 <div className="w-full cursor-pointer rounded border border-gray-400/50 bg-gray-100 py-0.5 px-3 text-center text-sm font-semibold text-gray-400">
                                     On Rent
                                 </div>
                             ) : (
                                 <>
-                                    <button className="button-os bg-orange-400 px-3 text-xs hover:bg-orange-500">
+                                    <button
+                                        className="button-os bg-orange-400 px-3 text-xs hover:bg-orange-500"
+                                        onClick={async () => {
+                                            await removeFromRent(signer.signer, editionId, copyUid);
+                                        }}>
                                         Remove From Rent
                                     </button>
                                     <button
