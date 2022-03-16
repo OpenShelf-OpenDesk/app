@@ -176,10 +176,16 @@ const RentedBookCard = ({id}) => {
                             className="button-od bg-gray-600 px-3 text-xs hover:bg-gray-700"
                             onClick={() => {
                                 setMainLoading(true);
-                                router.push({
-                                    pathname: `/openshelf/bookReader`,
-                                    query: {editionAddress: copy.edition.id, copyUid: copy.copyUid}
-                                });
+                                router.push(
+                                    {
+                                        pathname: `/openshelf/reader`,
+                                        query: {
+                                            editionAddress: copy.edition.id,
+                                            copyUid: copy.copyUid
+                                        }
+                                    },
+                                    `/openshelf/reader`
+                                );
                             }}>
                             Read
                         </button>

@@ -85,13 +85,13 @@ const DistributedBookCard = ({id}) => {
                                 setMainLoading(true);
                                 router.push(
                                     {
-                                        pathname: `/openshelf/bookReader`,
+                                        pathname: `/openshelf/reader`,
                                         query: {
                                             editionAddress: copy.edition.id,
                                             copyUid: copy.copyUid
                                         }
                                     },
-                                    `/openshelf/bookReader`
+                                    `/openshelf/reader`
                                 );
                             }}>
                             Read

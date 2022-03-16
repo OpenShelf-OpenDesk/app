@@ -43,14 +43,14 @@ const NativeBookReader = ({editionAddress, copyUid}) => {
         return () => {
             setLoading(true);
         };
-    }, []);
+    }, [signer]);
 
     return (
         <>
             <div className={`h-full w-full`}>
-                <div className="fixed right-20 top-10 z-50 flex cursor-pointer justify-center rounded-full border bg-gray-100 p-3 hover:shadow-md">
+                <div className="fixed right-20 top-10 z-50 flex cursor-pointer justify-center rounded-full bg-os-500 p-1 hover:shadow-md">
                     <ArrowNarrowLeftIcon
-                        className="h-6 w-6"
+                        className="h-5 w-5 text-white"
                         onClick={() => {
                             setLoading(true);
                             router.push({
@@ -60,20 +60,20 @@ const NativeBookReader = ({editionAddress, copyUid}) => {
                     />
                 </div>
                 <div className="fixed left-20 top-10 z-50 flex items-center justify-center space-x-2.5">
-                    <div className="cursor-pointer rounded-full border bg-gray-100 p-3 hover:shadow-md">
+                    <div className="cursor-pointer rounded-full bg-os-500 p-1 hover:shadow-md">
                         <MinusIcon
-                            className="h-6 w-6"
+                            className="h-5 w-5 text-white"
                             onClick={() => {
                                 setZoomPercent(zoomPercent - 5);
                             }}
                         />
                     </div>
-                    <div className="rounded-lg bg-gray-50 px-3 py-2">
+                    <div className="rounded px-3 py-2 font-semibold text-os-500">
                         <p>{zoomPercent + " %"}</p>
                     </div>
-                    <div className="cursor-pointer rounded-full border bg-gray-100 p-3 hover:shadow-md">
+                    <div className="cursor-pointer rounded-full bg-os-500 p-1 hover:shadow-md">
                         <PlusIcon
-                            className="h-6 w-6"
+                            className="h-5 w-5 text-white"
                             onClick={() => {
                                 setZoomPercent(zoomPercent + 5);
                             }}
@@ -81,9 +81,9 @@ const NativeBookReader = ({editionAddress, copyUid}) => {
                     </div>
                 </div>
                 <div className="fixed right-20 bottom-10 z-50 flex items-center justify-center space-x-2.5">
-                    <div className="cursor-pointer rounded-full border bg-gray-100 p-3 hover:shadow-md">
+                    <div className="cursor-pointer rounded-full bg-os-500 p-1 hover:shadow-md">
                         <ChevronLeftIcon
-                            className="h-6 w-6"
+                            className="h-5 w-5 text-white"
                             onClick={() => {
                                 if (page > 1) {
                                     setPage(page - 1);
@@ -91,12 +91,12 @@ const NativeBookReader = ({editionAddress, copyUid}) => {
                             }}
                         />
                     </div>
-                    <div className="flex rounded-lg bg-gray-50 px-5 py-2">
+                    <div className="flex rounded px-5 py-2 font-semibold text-os-500">
                         <p>{page + " / " + numOfPages}</p>
                     </div>
-                    <div className="cursor-pointer rounded-full border bg-gray-100 p-3 hover:shadow-md">
+                    <div className="cursor-pointer rounded-full bg-os-500 p-1 hover:shadow-md">
                         <ChevronRightIcon
-                            className="h-6 w-6"
+                            className="h-5 w-5 text-white"
                             onClick={() => {
                                 if (page < numOfPages) {
                                     setPage(page + 1);
@@ -105,12 +105,13 @@ const NativeBookReader = ({editionAddress, copyUid}) => {
                         />
                     </div>
                 </div>
-                <div className="flex min-h-screen w-full items-center justify-center overflow-scroll bg-gray-50">
-                    {loadingState && (
-                        <div className="absolute z-10 flex h-[500px] w-[600px] items-center justify-center bg-white">
-                            <LoadingAnimation />
-                        </div>
-                    )}
+                <div className="flex min-h-screen w-full items-center justify-center overflow-scroll bg-os-50">
+                    <div
+                        className={`absolute z-10 flex h-full w-[600px] items-center justify-center bg-white transition-all duration-500 ease-in-out ${
+                            loadingState ? "opacity-100" : "opacity-0"
+                        }`}>
+                        <LoadingAnimation />
+                    </div>
                     <PreviewBook
                         url={`https://${bookURI}.ipfs.dweb.link`}
                         width={600}

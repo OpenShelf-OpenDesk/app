@@ -1,7 +1,7 @@
 import {useRouter} from "next/router";
 import NativeBookReader from "../../components/openshelf/NativeBookReader";
 
-const bookReader = () => {
+const BookReader = () => {
     const router = useRouter();
     const editionAddress = router.query.editionAddress;
     const copyUid = router.query.copyUid;
@@ -13,4 +13,4 @@ const bookReader = () => {
     );
 };
 
-export default bookReader;
+export default BookReader;

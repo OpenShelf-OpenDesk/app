@@ -329,10 +329,10 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                         setMainLoading(true);
                                         router.push(
                                             {
-                                                pathname: `/openshelf/bookReader`,
+                                                pathname: `/openshelf/reader`,
                                                 query: {editionAddress: editionId, copyUid: copyUid}
                                             },
-                                            `/openshelf/bookReader`
+                                            `/openshelf/reader`
                                         );
                                     }}>
                                     Read
