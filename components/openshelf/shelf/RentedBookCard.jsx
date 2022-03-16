@@ -75,9 +75,15 @@ const RentedBookCard = ({id}) => {
     };
 
     return (
-        <div className="relative">
+        <div className="group relative">
             <div
-                className={`group h-[300px] snap-start rounded bg-transparent transition duration-500 ease-in-out ${
+                className={`absolute inset-0 flex h-[300px] w-full items-center justify-center rounded border-2 border-gray-500 transition-all duration-300 ease-in-out ${
+                    loading ? "opacity-100" : "opacity-0"
+                }`}>
+                <LoadingAnimation />
+            </div>
+            <div
+                className={`h-[300px] snap-start rounded bg-transparent transition duration-500 ease-in-out ${
                     !loading ? "opacity-100" : "opacity-0"
                 }`}>
                 {!loading && (
@@ -222,12 +228,6 @@ const RentedBookCard = ({id}) => {
                         </div>
                     </>
                 )}
-            </div>
-            <div
-                className={`absolute inset-0 flex h-[300px] w-full items-center justify-center rounded border-2 border-gray-500 transition-all duration-300 ease-in-out ${
-                    loading ? "opacity-100" : "opacity-0"
-                }`}>
-                <LoadingAnimation />
             </div>
         </div>
     );

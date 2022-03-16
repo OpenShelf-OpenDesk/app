@@ -34,7 +34,13 @@ const OwnedBooks = () => {
     return (
         <div className="relative h-screen w-full rounded bg-os-500/[0.05] p-10">
             <div
-                className={`h-full w-full transition duration-500 ease-in-out ${
+                className={`absolute inset-0 flex h-full w-full items-center justify-center rounded transition-all duration-300 ease-in-out ${
+                    loading ? "opacity-100" : "opacity-0"
+                }`}>
+                <LoadingAnimation />
+            </div>
+            <div
+                className={`z-10 h-full w-full transition duration-500 ease-in-out ${
                     !loading ? "opacity-100" : "opacity-0"
                 }`}>
                 {!loading && (
@@ -75,12 +81,6 @@ const OwnedBooks = () => {
                         </div>
                     </div>
                 )}
-            </div>
-            <div
-                className={`absolute inset-0 flex h-full w-full items-center justify-center rounded transition-all duration-300 ease-in-out ${
-                    loading ? "opacity-100" : "opacity-0"
-                }`}>
-                <LoadingAnimation />
             </div>
         </div>
     );

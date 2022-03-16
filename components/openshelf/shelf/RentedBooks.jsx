@@ -33,11 +33,33 @@ const RentedBooks = () => {
     return (
         <div className="relative h-screen w-full rounded bg-os-500/[0.05] p-10">
             <div
+                className={`absolute inset-0 flex h-full w-full flex-col items-center justify-center transition-all duration-300 ease-in-out ${
+                    rentingEnabled ? "opacity-0" : "opacity-100"
+                }`}>
+                <Image
+                    src="/os/switches.svg"
+                    width={300 * 2}
+                    height={200 * 2}
+                    layout="fixed"
+                    className="h-full"
+                    alt="Renting not enabled"
+                />
+                <div className="mt-10">
+                    <p className="text-xl font-semibold text-gray-700">Renting not Enabled</p>
+                </div>
+            </div>
+            <div
                 className={`relative h-full transition duration-500 ease-in-out ${
                     rentingEnabled ? "opacity-100" : "opacity-0"
                 }`}>
                 {rentingEnabled && (
                     <>
+                        <div
+                            className={`absolute inset-0 flex h-full w-full items-center justify-center rounded transition-all duration-300 ease-in-out ${
+                                loading ? "opacity-100" : "opacity-0"
+                            }`}>
+                            <LoadingAnimation />
+                        </div>
                         <div
                             className={`h-full w-full transition duration-500 ease-in-out ${
                                 !loading ? "opacity-100" : "opacity-0"
@@ -80,30 +102,8 @@ const RentedBooks = () => {
                                 </div>
                             )}
                         </div>
-                        <div
-                            className={`absolute inset-0 flex h-full w-full items-center justify-center rounded transition-all duration-300 ease-in-out ${
-                                loading ? "opacity-100" : "opacity-0"
-                            }`}>
-                            <LoadingAnimation />
-                        </div>
                     </>
                 )}
-            </div>
-            <div
-                className={`absolute inset-0 flex h-full w-full flex-col items-center justify-center transition-all duration-300 ease-in-out ${
-                    rentingEnabled ? "opacity-0" : "opacity-100"
-                }`}>
-                <Image
-                    src="/os/switches.svg"
-                    width={300 * 2}
-                    height={200 * 2}
-                    layout="fixed"
-                    className="h-full"
-                    alt="Renting not enabled"
-                />
-                <div className="mt-10">
-                    <p className="text-xl font-semibold text-gray-700">Renting not Enabled</p>
-                </div>
             </div>
         </div>
     );
