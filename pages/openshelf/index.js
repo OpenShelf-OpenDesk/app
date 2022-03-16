@@ -44,7 +44,7 @@ const Home = () => {
                 } px-3 py-10 lg:py-20 lg:px-32`}>
                 <div className="flex flex-col items-center justify-evenly lg:flex-row lg:space-x-20">
                     <Image
-                        src="/undraw_Bookshelves_re_lxoy(animated).svg"
+                        src="/os/book_reading.svg"
                         width={300 * 1.5}
                         height={200 * 1.5}
                         layout="intrinsic"

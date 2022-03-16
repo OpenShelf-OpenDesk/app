@@ -210,7 +210,7 @@ const Publish = () => {
                                         />
                                         <div className="group flex h-full w-full cursor-pointer items-center justify-center bg-gray-50">
                                             <Image
-                                                src={`/undraw_add_document_re_mbjx.svg`}
+                                                src={`/od/save_to_bookmarks.svg`}
                                                 layout="intrinsic"
                                                 height={618}
                                                 width={809 * 0.7}

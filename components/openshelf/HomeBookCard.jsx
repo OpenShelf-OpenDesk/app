@@ -49,7 +49,7 @@ const HomeBookCard = ({id}) => {
             <div className="h-72 w-60 rounded border-2 border-transparent pt-20 group-hover:border-gray-500">
                 <div className="flex h-full flex-col p-3 text-gray-700">
                     <p className="break-all font-semibold leading-tight">
-                        {book.editionMetadata.title.length > 70
+                        {book.editionMetadata.title.length > 45
                             ? `${book.editionMetadata.title.substring(0, 45)}...`
                             : book.editionMetadata.title}
                     </p>
@@ -60,7 +60,7 @@ const HomeBookCard = ({id}) => {
                         </p>
                     )}
                     <p className="mt-3 break-all text-sm font-medium leading-tight">
-                        {book.editionMetadata.description.length > 115
+                        {book.editionMetadata.description.length > 110
                             ? `${book.editionMetadata.description.substring(0, 105)}...`
                             : book.editionMetadata.description}
                     </p>

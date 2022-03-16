@@ -22,7 +22,7 @@ const Shelf = () => {
     return (
         <Layout>
             <section className="h-full w-full px-6">
-                <div className="flex w-full justify-center">
+                <div className="flex h-full w-full justify-center">
                     <Tabs
                         tabs={["Owned", "Rented", "Distributed"]}
                         panels={[
