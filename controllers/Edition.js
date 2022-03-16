@@ -23,9 +23,6 @@ export async function buy(signer, editionAddress, price, cb) {
             const transactionStatus = await transaction.wait();
             cb(3);
             console.log(transactionStatus);
-            setTimeout(() => {
-                cb(4);
-            }, 1000);
         },
         async error => {
             if (error.code === 4001) {

@@ -81,7 +81,7 @@ const HomeBookCard = ({id}) => {
             </div>
         </div>
     ) : (
-        <div className="mr-8 flex h-72 w-60 items-center justify-center rounded border border-gray-400 bg-white">
+        <div className="flex h-72 w-60 items-center justify-center rounded border border-gray-400 bg-white">
             <LoadingAnimation />
         </div>
     );

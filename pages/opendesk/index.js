@@ -48,6 +48,7 @@ const Home = () => {
                             <button
                                 className="button-od w-1/5"
                                 onClick={() => {
+                                    setLoading(true);
                                     router.push("/opendesk/publish");
                                 }}>
                                 <p className="lg:text-base">Publish</p>
@@ -55,6 +56,7 @@ const Home = () => {
                             <button
                                 className="button-od w-1/4"
                                 onClick={() => {
+                                    setLoading(true);
                                     router.push("/opendesk/createSeries");
                                 }}>
                                 <p className="lg:text-base">Create Series</p>

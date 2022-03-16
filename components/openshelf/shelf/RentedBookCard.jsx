@@ -4,10 +4,12 @@ import PreviewBookCoverPage from "../../common/PreviewBookCoverPage";
 import LoadingAnimation from "../../common/LoadingAnimation";
 import BigNumber from "bignumber.js";
 import {useSignerContext} from "../../../contexts/Signer";
+import {useLoadingContext} from "../../../contexts/Loading";
 import {returnBook} from "../../../controllers/Rentor";
 
 const RentedBookCard = ({id}) => {
     const {signer} = useSignerContext();
+    const {setLoading: setMainLoading} = useLoadingContext();
     const [copy, setCopy] = useState();
     const [intervalId, setIntervalId] = useState(0);
     const [loading, setLoading] = useState(true);
@@ -173,6 +175,7 @@ const RentedBookCard = ({id}) => {
                         <button
                             className="button-od bg-gray-600 px-3 text-xs hover:bg-gray-700"
                             onClick={() => {
+                                setMainLoading(true);
                                 router.push({
                                     pathname: `/openshelf/bookReader`,
                                     query: {editionAddress: copy.edition.id, copyUid: copy.copyUid}
@@ -185,7 +188,7 @@ const RentedBookCard = ({id}) => {
             </div>
         </div>
     ) : (
-        <div className="flex h-[300px] w-[480px] items-center justify-center rounded border-2 border-gray-500">
+        <div className="flex h-[300px] items-center justify-center rounded border-2 border-gray-500">
             <LoadingAnimation />
         </div>
     );

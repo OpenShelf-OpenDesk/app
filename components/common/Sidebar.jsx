@@ -3,11 +3,13 @@ import Identicon from "./Identicon";
 import {DuplicateIcon as DuplicateIconSolid, XIcon, MenuAlt2Icon} from "@heroicons/react/solid";
 import {DuplicateIcon as DuplicateIconOutline} from "@heroicons/react/outline";
 import {useThemeContext} from "../../contexts/Theme";
+import {useLoadingContext} from "../../contexts/Loading";
 import RentController from "../openshelf/RentController";
 import {useRouter} from "next/router";
 
 const Sidebar = ({open, setOpen, signer}) => {
     const {theme} = useThemeContext();
+    const {setLoading} = useLoadingContext();
     const router = useRouter();
 
     return (
@@ -38,6 +40,7 @@ const Sidebar = ({open, setOpen, signer}) => {
                                 theme === "os" ? "text-os-500" : "text-od-500"
                             } lg:text-4xl`}
                             onClick={() => {
+                                setLoading(true);
                                 router.push(`/${theme === "os" ? "openshelf" : "opendesk"}`);
                             }}>
                             {theme === "os" ? "OpenShelf" : "OpenDesk"}
@@ -86,8 +89,10 @@ const Sidebar = ({open, setOpen, signer}) => {
                                             : "font-medium hover:font-semibold"
                                     }`}
                                     onClick={() => {
-                                        router.pathname !== "/openshelf" &&
+                                        if (router.pathname !== "/openshelf") {
+                                            setLoading(true);
                                             router.push("/openshelf");
+                                        }
                                     }}>
                                     Home
                                 </div>
@@ -98,8 +103,10 @@ const Sidebar = ({open, setOpen, signer}) => {
                                             : "font-medium hover:font-semibold"
                                     }`}
                                     onClick={() => {
-                                        router.pathname !== "/openshelf/shelf" &&
+                                        if (router.pathname !== "/openshelf/shelf") {
+                                            setLoading(true);
                                             router.push("/openshelf/shelf");
+                                        }
                                     }}>
                                     Shelf
                                 </div>
@@ -110,14 +117,17 @@ const Sidebar = ({open, setOpen, signer}) => {
                                             : "font-medium hover:font-semibold"
                                     }`}
                                     onClick={() => {
-                                        router.pathname !== "/openshelf/about" &&
+                                        if (router.pathname !== "/openshelf/about") {
+                                            setLoading(true);
                                             router.push("/openshelf/about");
+                                        }
                                     }}>
                                     About
                                 </div>
                                 <div
                                     className={`flex w-1/3 cursor-pointer justify-center border-t-2 pt-3 font-medium text-od-500`}
                                     onClick={() => {
+                                        setLoading(true);
                                         router.push("/opendesk");
                                     }}>
                                     OpenDesk
@@ -136,7 +146,10 @@ const Sidebar = ({open, setOpen, signer}) => {
                                         : "font-medium hover:font-semibold"
                                 }`}
                                 onClick={() => {
-                                    router.pathname !== "/opendesk" && router.push("/opendesk");
+                                    if (router.pathname !== "/opendesk") {
+                                        setLoading(true);
+                                        router.push("/opendesk");
+                                    }
                                 }}>
                                 Home
                             </div>
@@ -147,8 +160,10 @@ const Sidebar = ({open, setOpen, signer}) => {
                                         : "font-medium hover:font-semibold"
                                 }`}
                                 onClick={() => {
-                                    router.pathname !== "/opendesk/desk" &&
-                                        router.push("/opendesk/shelf");
+                                    if (router.pathname !== "/openshelf/desk") {
+                                        setLoading(true);
+                                        router.push("/openshelf/desk");
+                                    }
                                 }}>
                                 Desk
                             </div>
@@ -159,14 +174,17 @@ const Sidebar = ({open, setOpen, signer}) => {
                                         : "font-medium hover:font-semibold"
                                 }`}
                                 onClick={() => {
-                                    router.pathname !== "/opendesk/about" &&
+                                    if (router.pathname !== "/opendesk/about") {
+                                        setLoading(true);
                                         router.push("/opendesk/about");
+                                    }
                                 }}>
                                 About
                             </div>
                             <div
                                 className={`flex w-1/3 cursor-pointer justify-center border-t-2 pt-10  font-medium text-os-500`}
                                 onClick={() => {
+                                    setLoading(true);
                                     router.push("/openshelf");
                                 }}>
                                 OpenShelf

@@ -276,7 +276,9 @@ const DynamicAddressPage = () => {
                                                         edition.price,
                                                         setProgressStatusCB
                                                     );
+                                                    setProgressStatusCB(4);
                                                     setTimeout(() => {
+                                                        setLoading(true);
                                                         router.push(`/openshelf/shelf`);
                                                     }, 1000);
                                                 }}>
