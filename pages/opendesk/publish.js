@@ -18,6 +18,7 @@ import {useThemeContext} from "../../contexts/Theme";
 import {useLoadingContext} from "../../contexts/Loading";
 import Identicon from "../../components/common/Identicon";
 import {addContributors} from "../../controllers/Edition";
+import LoadingAnimation from "../../components/common/LoadingAnimation";
 
 const Publish = () => {
     const {setTheme} = useThemeContext();
@@ -77,6 +78,7 @@ const Publish = () => {
     const [newContributorRole, setNewContributorRole] = useState("");
     const [newContributorAddress, setNewContributorAddress] = useState("");
     const [newContributorShare, setNewContributorShare] = useState("");
+    const [bookLoading, setBookLoading] = useState(true);
 
     useEffect(() => {
         setContributors(() => {
@@ -126,6 +128,7 @@ const Publish = () => {
             const editionAddress = await launchNewBook(signer.signer, newBook, setProgressStatusCB);
             await addContributors(signer.signer, editionAddress, contributors, setProgressStatusCB);
             setTimeout(() => {
+                setLoading(true);
                 router.push(`/opendesk`);
             }, 1000);
             console.log(newBook);
@@ -158,14 +161,23 @@ const Publish = () => {
                                             setSelectedBookFile(null);
                                             setSelectedBookLocalURL("");
                                             setValidSubmitAttempt(0);
+                                            setBookLoading(true);
                                         }}>
                                         <div className="flex cursor-pointer items-center space-x-2 rounded bg-red-200 px-3 py-2 text-sm hover:bg-red-300">
                                             <DocumentRemoveIcon className="h-4 w-4" />
                                             <p>Remove this e-book file</p>
                                         </div>
                                     </div>
-                                    <div className="flex h-full w-full justify-center overflow-y-scroll">
-                                        <PreviewBook url={selectedBookLocalURL} />
+                                    <div className="relative flex h-full w-[556px] justify-center overflow-y-scroll">
+                                        {bookLoading && (
+                                            <div className="absolute z-10 flex h-full w-full items-center justify-center bg-white">
+                                                <LoadingAnimation />
+                                            </div>
+                                        )}
+                                        <PreviewBook
+                                            url={selectedBookLocalURL}
+                                            setLoading={setBookLoading}
+                                        />
                                     </div>
                                 </>
                             ) : (
@@ -193,6 +205,7 @@ const Publish = () => {
                                                 setSelectedBookFile(e.target.files[0]);
                                                 const url = URL.createObjectURL(e.target.files[0]);
                                                 setSelectedBookLocalURL(url);
+                                                setBookLoading(true);
                                             }}
                                         />
                                         <div className="group flex h-full w-full cursor-pointer items-center justify-center bg-gray-50">

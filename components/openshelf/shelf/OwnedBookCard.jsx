@@ -6,12 +6,16 @@ import BigNumber from "bignumber.js";
 import {putOnRent, removeFromRent} from "../../../controllers/Rentor";
 import {lockWith} from "../../../controllers/Edition";
 import contractAddresses from "../../../contracts/addresses.json";
-import {CheckIcon, PencilAltIcon} from "@heroicons/react/solid";
+import {CheckIcon, PencilAltIcon, ExternalLinkIcon} from "@heroicons/react/solid";
 import {calculateFlowRate} from "../../../utils/superfluid";
 import {useSignerContext} from "../../../contexts/Signer";
+import {useLoadingContext} from "../../../contexts/Loading";
+import {useRouter} from "next/router";
 
 const OwnedBookCard = ({editionId, copyUid, owner}) => {
+    const router = useRouter();
     const {signer} = useSignerContext();
+    const {setLoading: setMainLoading} = useLoadingContext();
     const [copy, setCopy] = useState();
     const [rentRecords, setRentRecords] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -74,6 +78,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
         }
         if (copy) {
             copy.onRent &&
+                copy.rentRecord &&
                 copy.rentRecord.rentStartDate &&
                 !copy.rentEndDate &&
                 calculateCurrentRentRevenue(true);
@@ -96,11 +101,11 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
             clearInterval(intervalId);
             return;
         }
-        let flowRate = copy.rentRecord.flowRate / 1000;
+        let flowRate = copy.rentRecord.flowRate / 1000; // flowRate in /mSec.
         const currentInFlowSoFar =
             (new Date().getTime() - copy.rentRecord.rentStartDate * 1000) * flowRate;
         setTotalRentRevenue(state => {
-            return currentInFlowSoFar;
+            return state + currentInFlowSoFar;
         });
 
         if (on) {
@@ -143,7 +148,14 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                         </p>
                     </div>
                 </div>
-                <div className="flex h-full flex-1 flex-col justify-between space-y-3 py-7 px-10">
+                <div className="relative flex h-full flex-1 flex-col justify-between space-y-3 py-7 px-10">
+                    <ExternalLinkIcon
+                        className="invisible absolute top-2 right-2 h-4 w-4 cursor-pointer text-gray-700 opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100"
+                        onClick={() => {
+                            setMainLoading(true);
+                            router.push(`/openshelf/book/${editionId}`);
+                        }}
+                    />
                     <div className="flex h-full flex-col items-center justify-center space-y-3">
                         <div className="flex w-full items-center justify-between">
                             <span className="text-xs font-medium">Purchased On</span>
@@ -181,7 +193,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                 Flow Rate
                                 {!editFlowRate && (
                                     <PencilAltIcon
-                                        className="absolute -right-4 -top-1 h-3.5 w-3.5 cursor-pointer"
+                                        className="invisible absolute -right-4 -top-1 h-3.5 w-3.5 cursor-pointer opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100"
                                         onClick={() => {
                                             setNewFlowRate(0);
                                             setEditFlowRate(true);
@@ -262,8 +274,8 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                         </div>
                     </div>
                     <div className="invisible flex justify-between space-x-2 opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100">
-                        {copy.onRent ? (
-                            !copy.rentRecord.rentEndDate ? (
+                        {copy.onRent && copy.rentRecord ? (
+                            copy.rentRecord.rentStartDate ? (
                                 <div className="w-full cursor-pointer rounded border border-gray-400/50 bg-gray-100 py-0.5 px-3 text-center text-sm font-semibold text-gray-400">
                                     On Rent
                                 </div>
@@ -279,6 +291,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                     <button
                                         className="button-od bg-gray-600 px-3 text-xs hover:bg-gray-700"
                                         onClick={() => {
+                                            setMainLoading(true);
                                             router.push({
                                                 pathname: `/openshelf/bookReader`,
                                                 query: {editionAddress: editionId, copyUid: copyUid}
@@ -313,10 +326,14 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                 <button
                                     className="button-od bg-gray-600 px-3 text-xs hover:bg-gray-700"
                                     onClick={() => {
-                                        router.push({
-                                            pathname: `/openshelf/bookReader`,
-                                            query: {editionAddress: editionId, copyUid: copyUid}
-                                        });
+                                        setMainLoading(true);
+                                        router.push(
+                                            {
+                                                pathname: `/openshelf/bookReader`,
+                                                query: {editionAddress: editionId, copyUid: copyUid}
+                                            },
+                                            `/openshelf/bookReader`
+                                        );
                                     }}>
                                     Read
                                 </button>
@@ -327,7 +344,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
             </div>
         </div>
     ) : (
-        <div className="flex h-[300px] w-[480px] items-center justify-center rounded border-2 border-gray-500">
+        <div className="flex h-[300px] items-center justify-center rounded border-2 border-gray-500">
             <LoadingAnimation />
         </div>
     );
