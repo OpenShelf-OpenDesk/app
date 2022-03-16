@@ -23,6 +23,7 @@ import {useSignerContext} from "../../contexts/Signer";
 import {useSuperfluidFrameworkContext} from "../../contexts/SuperfluidFramework";
 import BigNumber from "bignumber.js";
 import {useRouter} from "next/router";
+import {useRentingEnabledContext} from "../../contexts/RentingEnabled";
 
 const RentController = () => {
     const router = useRouter();
@@ -37,6 +38,7 @@ const RentController = () => {
 
     const {signer} = useSignerContext();
     const {superfluidFramework} = useSuperfluidFrameworkContext();
+    const {setRentingEnabled} = useRentingEnabledContext();
 
     const handleUpdateFlow = async () => {
         setToggled(false);
@@ -122,6 +124,10 @@ const RentController = () => {
             router.reload();
         }
     }, [signer, superfluidFramework]);
+
+    useEffect(() => {
+        setRentingEnabled(toggled);
+    }, [toggled]);
 
     useEffect(() => {
         async function getData() {
