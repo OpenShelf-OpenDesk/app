@@ -179,7 +179,7 @@ export async function wrap(sf, signer, amount) {
 export async function getFlowBalance(sf, sender, cb) {
     await sf.query.on(
         (events, unsubscribe) => {
-            if (events) {
+            if (events.length >= 2) {
                 cb(
                     Number(weiToEther(events[0].flowRate) * 2592000).toPrecision(3),
                     Number(weiToEther(events[1].flowRate) * 2592000).toPrecision(3)
