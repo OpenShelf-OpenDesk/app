@@ -1,6 +1,7 @@
 import {useEffect} from "react";
 import Layout from "../../components/common/Layout";
 import Tabs from "../../components/common/Tabs";
+import DistributedBooks from "../../components/openshelf/shelf/DistributedBooks";
 import OwnedBooks from "../../components/openshelf/shelf/OwnedBooks";
 import RentedBooks from "../../components/openshelf/shelf/RentedBooks";
 import {useLoadingContext} from "../../contexts/Loading";
@@ -27,7 +28,7 @@ const Shelf = () => {
                         panels={[
                             <OwnedBooks key={1} />,
                             <RentedBooks key={2} />,
-                            <OwnedBooks key={3} />
+                            <DistributedBooks key={3} />
                         ]}
                     />
                 </div>
