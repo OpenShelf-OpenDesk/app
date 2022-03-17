@@ -15,7 +15,7 @@ const HomeBookCard = ({id}) => {
             const bookData = await executeQuery(`
             query{
                 edition(id: "${id}"){
-                    contributions(first:1){
+                    contributions(orderBy:share, orderDirection: desc ,first:1){
                         contributor{
                             id
                             name
@@ -30,15 +30,17 @@ const HomeBookCard = ({id}) => {
                     }
                 }
             }`);
-            setBook(bookData.edition);
-            setLoading(false);
+            if (bookData) {
+                setBook(bookData.edition);
+                setLoading(false);
+            }
         };
         if (id) {
             getData();
         }
     }, [id]);
 
-    return book ? (
+    return book && book.contributions.length > 0 ? (
         <div className="group h-80 w-60 snap-start rounded bg-white">
             <div
                 className={`absolute h-72 w-60 origin-bottom-right overflow-visible rounded shadow-md transition duration-500 ease-in-out group-hover:z-10 group-hover:-translate-y-56 group-hover:shadow-xl`}>

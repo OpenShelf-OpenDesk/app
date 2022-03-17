@@ -42,7 +42,7 @@ const DistributedBooks = () => {
                     !loading ? "opacity-100" : "opacity-0"
                 }`}>
                 {!loading && (
-                    <div className="relative h-full">
+                    <div className="h-full">
                         <div
                             className={`grid grid-cols-3 gap-10 transition duration-500 ease-in-out ${
                                 distributedBooks.length > 0 ? "opacity-100" : "opacity-0"
