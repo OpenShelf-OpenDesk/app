@@ -13,6 +13,7 @@ import BigNumber from "bignumber.js";
 import {buy} from "../../../controllers/Edition";
 import ProgressStatus from "../../../components/common/ProgressStatus";
 import {takeOnRent} from "../../../controllers/Rentor";
+import EditionOffersTable from "../../../components/openshelf/EditionOffersTable";
 
 const DynamicAddressPage = () => {
     const {setTheme} = useThemeContext();
@@ -241,50 +242,73 @@ const DynamicAddressPage = () => {
                                 </p>
                                 <div className="mt-16 grid w-full grid-cols-4 grid-rows-2 gap-3">
                                     <div className="col-span-1 row-span-1 flex flex-col justify-between rounded border-2 border-gray-500 py-5 px-5">
-                                        <div className="self-end pt-2">
-                                            <span className="text-2xl font-semibold">
-                                                {new BigNumber(edition.price)
-                                                    .shiftedBy(-18)
-                                                    .toFixed(4)}
-                                            </span>
-                                            &nbsp;
-                                            <span className="align-top text-sm font-medium">
-                                                MATIC
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <div className="mt-8 flex flex-col">
-                                                <span>
-                                                    {edition.supplyLimited && (
-                                                        <span className="text-sm leading-3">
-                                                            Limited Sale! <br /> Only&nbsp;
-                                                            <span className="text-base font-semibold">
-                                                                {edition.pricedBookSupplyLimit -
-                                                                    edition.pricedBookPrinted}
-                                                            </span>
-                                                            &nbsp;copies left
-                                                        </span>
-                                                    )}
+                                        {edition.supplyLimited &&
+                                        edition.pricedBookSupplyLimit -
+                                            edition.pricedBookPrinted ===
+                                            0 ? (
+                                            <div className="flex h-full items-center justify-center">
+                                                <span className="px-5 text-center text-lg font-medium">
+                                                    No copies available for Sale
                                                 </span>
                                             </div>
-                                            <button
-                                                className="button-os mt-5 w-full"
-                                                onClick={async () => {
-                                                    await buy(
-                                                        signer.signer,
-                                                        edition.id,
-                                                        edition.price,
-                                                        setProgressStatusCB
-                                                    );
-                                                    setProgressStatusCB(4);
-                                                    setTimeout(() => {
-                                                        setLoading(true);
-                                                        router.push(`/openshelf/shelf`);
-                                                    }, 1000);
-                                                }}>
-                                                Buy
-                                            </button>
-                                        </div>
+                                        ) : (
+                                            <>
+                                                <div className="self-end pt-2">
+                                                    <span className="text-2xl font-semibold">
+                                                        {new BigNumber(edition.price)
+                                                            .shiftedBy(-18)
+                                                            .toFixed(4)}
+                                                    </span>
+                                                    &nbsp;
+                                                    <span className="align-top text-sm font-medium">
+                                                        MATIC
+                                                    </span>
+                                                </div>
+                                                <div className="flex flex-col space-y-5">
+                                                    <div className="flex flex-col">
+                                                        <span>
+                                                            {edition.supplyLimited ? (
+                                                                <span className="text-sm leading-3">
+                                                                    Limited Sale! <br /> Only&nbsp;
+                                                                    <span className="text-base font-semibold">
+                                                                        {edition.pricedBookSupplyLimit -
+                                                                            edition.pricedBookPrinted}
+                                                                    </span>
+                                                                    &nbsp;copies left.
+                                                                </span>
+                                                            ) : (
+                                                                <span className="text-sm leading-3">
+                                                                    Available! <br />
+                                                                    <span className="text-base font-semibold">
+                                                                        {edition.pricedBookPrinted}
+                                                                    </span>
+                                                                    &nbsp;copies sold.
+                                                                </span>
+                                                            )}
+                                                        </span>
+                                                    </div>
+                                                    <button
+                                                        className="button-os w-full"
+                                                        onClick={async () => {
+                                                            await buy(
+                                                                signer.signer,
+                                                                edition.id,
+                                                                edition.price,
+                                                                setProgressStatusCB
+                                                            );
+                                                            setTimeout(() => {
+                                                                setProgressStatusCB(4);
+                                                            }, 700);
+                                                            setTimeout(() => {
+                                                                setLoading(true);
+                                                                router.push(`/openshelf/shelf`);
+                                                            }, 1000);
+                                                        }}>
+                                                        Buy
+                                                    </button>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                     <div className="col-span-1 row-span-1 flex flex-col justify-between rounded border-2 border-gray-500 py-5 px-5">
                                         {rentData.length === 0 ? (
@@ -336,7 +360,13 @@ const DynamicAddressPage = () => {
                                             </>
                                         )}
                                     </div>
-                                    <div className="col-span-2 row-span-2 flex flex-col rounded border-2 border-gray-500 py-5 px-5"></div>
+                                    <div className="col-span-2 row-span-2 flex flex-col rounded border-2 border-gray-500">
+                                        <EditionOffersTable
+                                            editionAddress={edition.id}
+                                            refresh={refresh}
+                                            setRefresh={setRefresh}
+                                        />
+                                    </div>
                                     <div className="col-span-2 row-span-1 flex flex-col space-y-1 rounded border-2 border-gray-500 py-5 px-5">
                                         <span className="self-center text-lg font-semibold">
                                             Enter Voucher Details
