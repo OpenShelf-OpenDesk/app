@@ -107,7 +107,7 @@ const NativeBookReader = ({editionAddress, copyUid}) => {
                 </div>
                 <div className="flex min-h-screen w-full items-center justify-center overflow-scroll bg-os-50">
                     <div
-                        className={`absolute z-10 flex h-full w-[600px] items-center justify-center bg-white transition-all duration-300 ease-in-out ${
+                        className={`absolute z-10 flex h-[500px] w-[600px] items-center justify-center bg-white transition-all duration-300 ease-in-out ${
                             loadingState ? "opacity-100" : "opacity-0"
                         }`}>
                         <LoadingAnimation />
