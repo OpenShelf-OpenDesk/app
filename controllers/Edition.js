@@ -34,12 +34,21 @@ export async function buy(signer, editionAddress, price, cb) {
     );
 }
 
-export async function transfer(signer, editionAddress, to, copyUid) {
-    await callContract(signer, editionAddress, async contract => {
-        const transaction = await contract.transfer(to, copyUid);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
+export async function transfer(signer, editionAddress, to, copyUid, royalty) {
+    await callContract(
+        signer,
+        editionAddress,
+        async contract => {
+            const transaction = await contract.transfer(to, copyUid, {
+                value: royalty
+            });
+            const transactionStatus = await transaction.wait();
+            console.log(transactionStatus);
+        },
+        err => {
+            console.log(err);
+        }
+    );
 }
 
 export async function uri(signer, editionAddress, copyUid) {
