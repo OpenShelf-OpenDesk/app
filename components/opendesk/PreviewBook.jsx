@@ -17,7 +17,7 @@ const PreviewBook = ({url, setLoading}) => {
             onLoadSuccess={onDocumentLoadSuccess}
             loading={""}>
             {Array.from(new Array(numPages), (el, index) => (
-                <>
+                <div key={index}>
                     <Page
                         pageNumber={index + 1}
                         key={index}
@@ -30,7 +30,7 @@ const PreviewBook = ({url, setLoading}) => {
                         setTimeout(() => {
                             setLoading(false);
                         }, 1000)}
-                </>
+                </div>
             ))}
         </Document>
     );
