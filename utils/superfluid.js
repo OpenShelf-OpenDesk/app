@@ -146,7 +146,7 @@ export async function wrap(sf, signer, amount) {
     //     MaticABI,
     //     signer
     // );
-    MATICx = await web3ModalSf.loadSuperToken(network.polytest.acceptedToken);
+    MATICx = await sf.loadSuperToken(network.polytest.acceptedToken);
     try {
         // approving
         // console.log("Approving test MATIC spend.");
