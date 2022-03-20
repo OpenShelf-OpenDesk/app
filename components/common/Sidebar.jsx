@@ -134,7 +134,7 @@ const Sidebar = ({open, setOpen, signer}) => {
                                 </div>
                             </div>
                             <div className="w-full">
-                                <RentController />
+                                <RentController sidebarOpen={open} />
                             </div>
                         </div>
                     ) : (

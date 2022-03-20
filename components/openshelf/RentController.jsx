@@ -24,8 +24,9 @@ import {useSuperfluidFrameworkContext} from "../../contexts/SuperfluidFramework"
 import BigNumber from "bignumber.js";
 import {useRouter} from "next/router";
 import {useRentingEnabledContext} from "../../contexts/RentingEnabled";
+import {executeQuery} from "../../utils/apolloClient";
 
-const RentController = () => {
+const RentController = ({sidebarOpen}) => {
     const router = useRouter();
     const [toggle, setToggle] = useState(false);
     const [toggled, setToggled] = useState(false);
@@ -35,6 +36,8 @@ const RentController = () => {
     const [outFlowBalance, setOutFlowBalance] = useState(0);
     const [intervalId, setIntervalId] = useState(0);
     const [balanceRunOutDate, setBalanceRunOutDate] = useState(0);
+    const [booksTakenOnRentCount, setBooksTakenOnRentCount] = useState(0);
+    const [booksGivenOnRentCount, setBooksGivenOnRentCount] = useState(0);
 
     const {signer} = useSignerContext();
     const {superfluidFramework} = useSuperfluidFrameworkContext();
@@ -57,9 +60,8 @@ const RentController = () => {
     const handleWrap = async () => {
         setLoading(true);
         setToggled(false);
-        await wrap(superfluidFramework, signer, 0.8);
-        const [balance, _] = await getSuperTokenBalance(superfluidFramework, signer);
-        setSuperTokenBalance(balance);
+        await wrap(superfluidFramework, signer, 0.5);
+        await updateSuperTokenBalance(false);
         setLoading(false);
         setToggled(true);
     };
@@ -130,6 +132,29 @@ const RentController = () => {
     }, [toggled]);
 
     useEffect(() => {
+        const getData = async () => {
+            const booksTakenOnRent = await executeQuery(
+                `query{
+                    rentRecords(where:{rentedTo: "${signer.address.toLowerCase()}", rentEndDate:null}){
+                      id
+                    }
+                }`
+            );
+            setBooksTakenOnRentCount(booksTakenOnRent.rentRecords.length);
+            const booksGivenOnRent = await executeQuery(
+                `query{
+                    copies (where: {onRent: true, owner: "${signer.address.toLowerCase()}"}){
+                      id
+                    }
+                }`
+            );
+            setBooksGivenOnRentCount(booksGivenOnRent.copies.length);
+        };
+
+        getData();
+    }, [sidebarOpen]);
+
+    useEffect(() => {
         async function getData() {
             if (signer && superfluidFramework) {
                 if (!toggled && toggle) {
@@ -166,50 +191,76 @@ const RentController = () => {
 
     return (
         <div className="w-full px-16 font-medium">
-            <div className="flex w-full items-center justify-center space-x-7 py-4">
-                <span className="text-lg font-semibold">Enable Renting</span>
-                <Toggle loading={loading} toggle={toggle} setToggle={setToggle} />
-            </div>
+            {booksTakenOnRentCount === 0 && booksGivenOnRentCount === 0 ? (
+                <div className="flex w-full items-center justify-center space-x-7 py-4">
+                    <span className="text-lg font-semibold">Enable Renting</span>
+                    <Toggle loading={loading} toggle={toggle} setToggle={setToggle} />
+                </div>
+            ) : (
+                <div className="pb-2 text-center text-sm font-medium">
+                    You have <span className="font-mono font-bold">{booksGivenOnRentCount}</span>{" "}
+                    books given on rent and{" "}
+                    <span className="font-mono font-bold">{booksTakenOnRentCount}</span> books taken
+                    on rent. Clear these records to Update or Delete subscription.
+                </div>
+            )}
 
             <div className="relative">
-                <div
-                    className={`mr-10 h-full w-full rounded border-2 border-gray-500/80 py-3 ${
-                        !toggled && "blur-[3px]"
-                    }`}>
+                <div className={`mr-10 h-full w-full rounded border-2 border-gray-500/80 py-3`}>
                     <div className="flex items-center justify-around pt-5">
-                        <div className="flex w-full flex-col items-center justify-between">
-                            <div
-                                className="group"
-                                onClick={() => {
-                                    handleUpdateFlow();
-                                }}>
-                                <PencilAltIconOutline className="mb-1 h-6 w-6 cursor-pointer group-hover:hidden" />
-                                <PencilAltIconSolid className="mb-1 hidden h-6 w-6 cursor-pointer group-hover:flex" />
+                        {loading ? (
+                            <div className="flex w-full flex-col items-center justify-between">
+                                <LoadingAnimation />
                             </div>
-                            <div className="flex items-center justify-between font-mono text-xl font-semibold tracking-wider">
-                                {inFlowBalance}
-                                <span className="text-3xl font-light tracking-widest">/</span>
-                                {outFlowBalance}
-                            </div>
-                            <span className="text-center text-sm">
-                                Flow Balance
-                                <br />
-                                <span className="w-min">
-                                    <img
-                                        className="inline"
-                                        src="/matic.svg"
-                                        height={14}
-                                        width={14}
-                                    />
-                                    <span className="text-xs">
-                                        <span className="align-sub">x</span>&nbsp;/&nbsp;month
-                                    </span>
-                                </span>
-                            </span>
-                        </div>
+                        ) : (
+                            <>
+                                {toggled ? (
+                                    <div className="flex w-full flex-col items-center justify-between">
+                                        <div
+                                            className="group"
+                                            onClick={() => {
+                                                handleUpdateFlow();
+                                            }}>
+                                            <PencilAltIconOutline className="mb-1 h-6 w-6 cursor-pointer group-hover:hidden" />
+                                            <PencilAltIconSolid className="mb-1 hidden h-6 w-6 cursor-pointer group-hover:flex" />
+                                        </div>
+                                        <div className="flex items-center justify-between font-mono text-xl font-semibold tracking-wider">
+                                            {inFlowBalance}
+                                            <span className="text-3xl font-light tracking-widest">
+                                                /
+                                            </span>
+                                            {outFlowBalance}
+                                        </div>
+                                        <span className="text-center text-sm">
+                                            Flow Balance
+                                            <br />
+                                            <span className="w-min">
+                                                <img
+                                                    className="inline"
+                                                    src="/matic.svg"
+                                                    height={14}
+                                                    width={14}
+                                                />
+                                                <span className="text-xs">
+                                                    <span className="align-sub">x</span>
+                                                    &nbsp;/&nbsp;month
+                                                </span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div className="flex w-full flex-col items-center justify-between pt-5 text-center font-semibold">
+                                        <span>
+                                            Not <br /> Subscribed
+                                        </span>
+                                    </div>
+                                )}
+                            </>
+                        )}
+
                         <div className="flex h-full w-full flex-col items-center justify-between">
                             <div
-                                className="group"
+                                className="group invisible"
                                 onClick={() => {
                                     handleWrap();
                                 }}>
@@ -271,11 +322,6 @@ const RentController = () => {
                         </a>
                     </div>
                 </div>
-                {!toggled && (
-                    <div className="absolute inset-0 flex h-full w-full items-center justify-center bg-transparent">
-                        {loading && <LoadingAnimation />}
-                    </div>
-                )}
             </div>
         </div>
     );
