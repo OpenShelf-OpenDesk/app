@@ -11,30 +11,38 @@ async function callContract(signer, functionToCall, handleError) {
     }
 }
 
-export async function putOnRent(signer, bookAddress, copyUid, flowRate) {
+export async function putOnRent(signer, bookAddress, copyUid, flowRate, cb) {
     await callContract(
         signer,
         async contract => {
             const transaction = await contract.putOnRent(bookAddress, copyUid, flowRate);
             const transactionStatus = await transaction.wait();
+            cb(4);
             console.log(transactionStatus);
         },
-        err => {
+        async err => {
             console.log(err);
         }
     );
 }
 
-export async function removeFromRent(signer, bookAddress, copyUid) {
+export async function removeFromRent(signer, bookAddress, copyUid, cb) {
+    cb(1);
     await callContract(
         signer,
         async contract => {
             const transaction = await contract.removeFromRent(bookAddress, copyUid);
+            cb(2);
             const transactionStatus = await transaction.wait();
+            cb(3);
             console.log(transactionStatus);
         },
-        err => {
-            console.log(err);
+        async error => {
+            if (error.code === 4001) {
+                cb(-2);
+            } else {
+                cb(-3);
+            }
         }
     );
 }
@@ -47,7 +55,7 @@ export async function takeOnRent(signer, bookAddress, copyUid) {
             const transactionStatus = await transaction.wait();
             console.log(transactionStatus);
         },
-        err => {
+        async err => {
             console.log(err);
         }
     );
@@ -61,7 +69,7 @@ export async function returnBook(signer, bookAddress, copyUid) {
             const transactionStatus = await transaction.wait();
             console.log(transactionStatus);
         },
-        err => {
+        async err => {
             console.log(err);
         }
     );
@@ -73,7 +81,7 @@ export async function uri(signer, bookAddress, copyUid) {
         async contract => {
             return await contract.uri(bookAddress, copyUid);
         },
-        err => {
+        async err => {
             console.log(err);
         }
     );

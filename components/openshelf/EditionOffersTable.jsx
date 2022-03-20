@@ -5,7 +5,7 @@ import {cancelOffer, makeOffer} from "../../controllers/Exchange";
 import {executeQuery} from "../../utils/apolloClient";
 import LoadingAnimation from "../common/LoadingAnimation";
 
-const EditionOffersTable = ({editionAddress, refresh, setRefresh}) => {
+const EditionOffersTable = ({editionAddress, refresh, setRefresh, deleteOfferCB, placeOfferCB}) => {
     const {signer} = useSignerContext();
     const [editionOffers, setEditionOffers] = useState([]);
     const [placedOffers, setPlacedOffers] = useState([]);
@@ -102,8 +102,12 @@ const EditionOffersTable = ({editionAddress, refresh, setRefresh}) => {
                                                                 await cancelOffer(
                                                                     signer.signer,
                                                                     editionAddress,
-                                                                    selectedCopyUid
+                                                                    selectedCopyUid,
+                                                                    deleteOfferCB
                                                                 );
+                                                                setTimeout(() => {
+                                                                    deleteOfferCB(4);
+                                                                }, 700);
                                                                 setTimeout(() => {
                                                                     setRefresh(state => {
                                                                         return state + 1;
@@ -231,10 +235,14 @@ const EditionOffersTable = ({editionAddress, refresh, setRefresh}) => {
                                                                     signer.signer,
                                                                     editionAddress,
                                                                     selectedCopyUid,
-                                                                    newOfferPrice
+                                                                    newOfferPrice,
+                                                                    placeOfferCB
                                                                 );
                                                                 setNewOfferPrice("");
                                                                 setOfferReq(false);
+                                                                setTimeout(() => {
+                                                                    placeOfferCB(4);
+                                                                }, 700);
                                                                 setTimeout(() => {
                                                                     setRefresh(state => {
                                                                         return state + 1;

@@ -6,7 +6,7 @@ import {offerAccepted} from "../../../controllers/Exchange";
 import {executeQuery} from "../../../utils/apolloClient";
 import LoadingAnimation from "../../common/LoadingAnimation";
 
-const CopyOffersTable = ({editionId, copyUid, setShowOffers, royalty}) => {
+const CopyOffersTable = ({editionId, copyUid, setShowOffers, royalty, setProgressStatusCB}) => {
     const {signer} = useSignerContext();
     const [copyOffers, setCopyOffers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -78,14 +78,19 @@ const CopyOffersTable = ({editionId, copyUid, setShowOffers, royalty}) => {
                                                     editionId,
                                                     selectedOfferer.toLowerCase(),
                                                     copyUid,
-                                                    royalty
+                                                    royalty,
+                                                    setProgressStatusCB
                                                 );
                                                 await offerAccepted(
                                                     signer.signer,
                                                     editionId,
                                                     copyUid,
-                                                    selectedOfferer.toLowerCase()
+                                                    selectedOfferer.toLowerCase(),
+                                                    setProgressStatusCB
                                                 );
+                                                setTimeout(() => {
+                                                    setProgressStatusCB(6);
+                                                }, 700);
                                                 setTimeout(() => {
                                                     setShowOffers(false);
                                                 }, 1500);

@@ -96,18 +96,13 @@ export async function launchNewBook(signer, bookDetails, cb) {
             newBook.pricedBookSupplyLimit,
             newBook.supplyLimited
         );
-        cb(5);
         const transactionStatus = await transaction.wait();
+        cb(5);
         const editionAddress = transactionStatus.events[0].args.editionAddress;
-        cb(6);
         return editionAddress;
     } catch (error) {
         console.error(error);
-        if (error.code === 4001) {
-            cb(-4);
-        } else {
-            cb(-5);
-        }
+        cb(-4);
     }
 }
 

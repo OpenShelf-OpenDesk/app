@@ -34,7 +34,8 @@ export async function buy(signer, editionAddress, price, cb) {
     );
 }
 
-export async function transfer(signer, editionAddress, to, copyUid, royalty) {
+export async function transfer(signer, editionAddress, to, copyUid, royalty, cb) {
+    cb(1);
     await callContract(
         signer,
         editionAddress,
@@ -42,11 +43,17 @@ export async function transfer(signer, editionAddress, to, copyUid, royalty) {
             const transaction = await contract.transfer(to, copyUid, {
                 value: royalty
             });
+            cb(2);
             const transactionStatus = await transaction.wait();
+            cb(3);
             console.log(transactionStatus);
         },
-        err => {
-            console.log(err);
+        async error => {
+            if (error.code === 4001) {
+                cb(-2);
+            } else {
+                cb(-3);
+            }
         }
     );
 }
@@ -78,17 +85,20 @@ export async function verifyOwnership(signer, editionAddress, owner, copyUid, di
     });
 }
 
-export async function lockWith(signer, editionAddress, to, copyUid) {
+export async function lockWith(signer, editionAddress, to, copyUid, cb) {
+    cb(1);
     await callContract(
         signer,
         editionAddress,
         async contract => {
             const transaction = await contract.lockWith(to, copyUid);
+            cb(2);
             const transactionStatus = await transaction.wait();
+            cb(3);
             console.log(transactionStatus);
         },
-        err => {
-            console.log(err);
+        async error => {
+            cb(-2);
         }
     );
 }
@@ -187,17 +197,12 @@ export async function addContributors(signer, editionAddress, newContributors, c
         editionAddress,
         async contract => {
             const transaction = await contract.addContributors(newContributors);
-            cb(7);
             const transactionStatus = await transaction.wait();
-            cb(8);
+            cb(6);
             console.log(transactionStatus);
         },
         async error => {
-            if (error.code === 4001) {
-                cb(-6);
-            } else {
-                cb(-7);
-            }
+            cb(-5);
         }
     );
 }

@@ -39,8 +39,7 @@ const Publish = () => {
         "Uploading e-book file",
         "Extracting Cover Page",
         "Uploading Book MetaData",
-        "Transaction Request Initiated",
-        "Book Launched Successfully",
+        "Launching Book",
         "Adding Contributors",
         "Transaction Successful"
     ];
@@ -127,6 +126,9 @@ const Publish = () => {
             };
             const editionAddress = await launchNewBook(signer.signer, newBook, setProgressStatusCB);
             await addContributors(signer.signer, editionAddress, contributors, setProgressStatusCB);
+            setTimeout(() => {
+                setProgressStatusCB(7);
+            }, 700);
             setTimeout(() => {
                 setLoading(true);
                 router.push(`/opendesk`);
