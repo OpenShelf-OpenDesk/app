@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import {useEffect, useState} from "react";
 import {useThemeContext} from "../../contexts/Theme";
 import {useSignerContext} from "../../contexts/Signer";
+import {useLoadingContext} from "../../contexts/Loading";
 
 const Layout = ({title, children}) => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -13,7 +14,7 @@ const Layout = ({title, children}) => {
     useEffect(() => {}, [signer]);
 
     return (
-        <div className="relative">
+        <div>
             <Head>
                 <title>{title}</title>
                 <meta

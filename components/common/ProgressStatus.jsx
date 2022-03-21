@@ -3,12 +3,12 @@ import LoadingAnimation from "./LoadingAnimation";
 
 const ProgressStatus = ({statusTags, status, children}) => {
     return (
-        <>
+        <div className="relative">
             <div className={`flex h-full w-screen ${Math.abs(status) > 0 && "blur-md"}`}>
                 {children}
             </div>
             <section
-                className={`fixed top-0 z-[90] flex h-full w-full items-center justify-center transition duration-500 ease-in-out ${
+                className={`fixed top-0 left-0 z-[90] flex h-full w-full items-center justify-center backdrop-blur-sm transition duration-500 ease-in-out ${
                     Math.abs(status) > 0 ? "" : "hidden"
                 }`}>
                 <div className="flex flex-col items-start justify-center space-y-8">
@@ -49,7 +49,7 @@ const ProgressStatus = ({statusTags, status, children}) => {
                     })}
                 </div>
             </section>
-        </>
+        </div>
     );
 };
 
