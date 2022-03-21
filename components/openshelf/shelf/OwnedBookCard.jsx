@@ -179,7 +179,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                 <ProgressStatus
                     status={progressStatusAcceptOffer}
                     statusTags={statusTagsAcceptOffer}>
-                    <div className="group relative w-[540px]">
+                    <div className="group relative w-[28%]">
                         <div
                             className={`absolute inset-0 flex h-[300px] w-full items-center justify-center rounded border-2 border-gray-500 transition-all duration-300 ease-in-out ${
                                 loading ? "opacity-100" : "opacity-0"
