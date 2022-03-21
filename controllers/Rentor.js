@@ -61,16 +61,23 @@ export async function takeOnRent(signer, bookAddress, copyUid) {
     );
 }
 
-export async function returnBook(signer, bookAddress, copyUid) {
+export async function returnBook(signer, bookAddress, copyUid, cb) {
+    cb(1);
     await callContract(
         signer,
         async contract => {
             const transaction = await contract.returnBook(bookAddress, copyUid);
+            cb(2);
             const transactionStatus = await transaction.wait();
+            cb(3);
             console.log(transactionStatus);
         },
-        async err => {
-            console.log(err);
+        async error => {
+            if (error.code === 4001) {
+                cb(-2);
+            } else {
+                cb(-3);
+            }
         }
     );
 }
