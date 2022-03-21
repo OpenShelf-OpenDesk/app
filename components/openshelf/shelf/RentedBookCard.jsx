@@ -7,9 +7,11 @@ import {useSignerContext} from "../../../contexts/Signer";
 import {useLoadingContext} from "../../../contexts/Loading";
 import {returnBook} from "../../../controllers/Rentor";
 import ProgressStatus from "../../common/ProgressStatus";
+import {useRouter} from "next/router";
 
 const RentedBookCard = ({id}) => {
     const {signer} = useSignerContext();
+    const router = useRouter();
     const {setLoading: setMainLoading} = useLoadingContext();
     const [copy, setCopy] = useState();
     const [intervalId, setIntervalId] = useState(0);
@@ -91,13 +93,13 @@ const RentedBookCard = ({id}) => {
             <div className="group relative w-[28%]">
                 <div
                     className={`absolute inset-0 flex h-[300px] w-full items-center justify-center rounded border-2 border-gray-500 transition-all duration-300 ease-in-out ${
-                        loading ? "opacity-100" : "opacity-0"
+                        loading ? "z-10 opacity-100" : "-z-10 opacity-0"
                     }`}>
                     <LoadingAnimation />
                 </div>
                 <div
                     className={`h-[300px] snap-start rounded bg-transparent transition duration-500 ease-in-out ${
-                        !loading ? "opacity-100" : "opacity-0"
+                        !loading ? "z-10 opacity-100" : "-z-10 opacity-0"
                     }`}>
                     {!loading && (
                         <>
@@ -231,6 +233,10 @@ const RentedBookCard = ({id}) => {
                                                 setTimeout(() => {
                                                     setProgressStatusReturnBookCB(4);
                                                 }, 700);
+                                                setTimeout(() => {
+                                                    setLoading(true);
+                                                    router.reload();
+                                                }, 1000);
                                             }}>
                                             Return Book
                                         </button>

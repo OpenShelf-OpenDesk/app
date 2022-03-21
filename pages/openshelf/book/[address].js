@@ -14,10 +14,12 @@ import {buy} from "../../../controllers/Edition";
 import ProgressStatus from "../../../components/common/ProgressStatus";
 import {takeOnRent} from "../../../controllers/Rentor";
 import EditionOffersTable from "../../../components/openshelf/EditionOffersTable";
+import {useRentingEnabledContext} from "../../../contexts/RentingEnabled";
 
 const DynamicAddressPage = () => {
     const {setTheme} = useThemeContext();
     const {loading, setLoading} = useLoadingContext();
+    const {rentingEnabled} = useRentingEnabledContext();
     const {signer} = useSignerContext();
     const router = useRouter();
     const {address} = router.query;
@@ -123,7 +125,7 @@ const DynamicAddressPage = () => {
         if (address) {
             getData();
         }
-    }, [refresh]);
+    }, [refresh, rentingEnabled]);
 
     return (
         !loading && (
@@ -400,22 +402,29 @@ const DynamicAddressPage = () => {
                                                             </div>
                                                             <div>
                                                                 <div className="flex flex-col">
-                                                                    <span>
-                                                                        {edition.supplyLimited && (
-                                                                            <span className="text-sm leading-3">
-                                                                                <span className="text-base font-semibold">
-                                                                                    {
-                                                                                        rentData.length
-                                                                                    }
-                                                                                </span>
-                                                                                &nbsp;copies
-                                                                                available for rent
+                                                                    {edition.supplyLimited && (
+                                                                        <span className="text-sm leading-3">
+                                                                            <span className="text-base font-semibold">
+                                                                                {rentData.length}
                                                                             </span>
-                                                                        )}
-                                                                    </span>
+                                                                            &nbsp;copies available
+                                                                            for rent
+                                                                        </span>
+                                                                    )}
+                                                                    {!rentingEnabled && (
+                                                                        <span className="text-sm leading-3 text-red-500 font-semibold py-1">
+                                                                            Not Subscribed for
+                                                                            Renting!
+                                                                        </span>
+                                                                    )}
                                                                 </div>
                                                                 <button
-                                                                    className="button-os mt-4 w-full bg-orange-400 hover:bg-orange-500"
+                                                                    className={`mt-4 w-full ${
+                                                                        !rentingEnabled
+                                                                            ? "button-disabled text-sm"
+                                                                            : "button-os bg-orange-400 hover:bg-orange-500"
+                                                                    }`}
+                                                                    disabled={!rentingEnabled}
                                                                     onClick={async () => {
                                                                         await takeOnRent(
                                                                             signer.signer,
@@ -428,6 +437,12 @@ const DynamicAddressPage = () => {
                                                                                 4
                                                                             );
                                                                         }, 700);
+                                                                        setTimeout(() => {
+                                                                            setLoading(true);
+                                                                            router.push(
+                                                                                `/openshelf/shelf`
+                                                                            );
+                                                                        }, 1000);
                                                                     }}>
                                                                     Rent
                                                                 </button>

@@ -5,9 +5,11 @@ import {transfer} from "../../../controllers/Edition";
 import {offerAccepted} from "../../../controllers/Exchange";
 import {executeQuery} from "../../../utils/apolloClient";
 import LoadingAnimation from "../../common/LoadingAnimation";
+import {useRouter} from "next/router";
 
 const CopyOffersTable = ({editionId, copyUid, setShowOffers, royalty, setProgressStatusCB}) => {
     const {signer} = useSignerContext();
+    const router = useRouter();
     const [copyOffers, setCopyOffers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedOfferer, setSelectedOfferer] = useState();
@@ -91,6 +93,10 @@ const CopyOffersTable = ({editionId, copyUid, setShowOffers, royalty, setProgres
                                                 setTimeout(() => {
                                                     setProgressStatusCB(6);
                                                 }, 700);
+                                                setTimeout(() => {
+                                                    setLoading(true);
+                                                    router.reload();
+                                                }, 1000);
                                                 setTimeout(() => {
                                                     setShowOffers(false);
                                                 }, 1500);

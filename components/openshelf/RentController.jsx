@@ -30,7 +30,7 @@ const RentController = ({sidebarOpen}) => {
     const router = useRouter();
     const [toggle, setToggle] = useState(false);
     const [toggled, setToggled] = useState(false);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [superTokenBalance, setSuperTokenBalance] = useState(0);
     const [inFlowBalance, setInFlowBalance] = useState(0);
     const [outFlowBalance, setOutFlowBalance] = useState(0);
@@ -43,28 +43,28 @@ const RentController = ({sidebarOpen}) => {
     const {superfluidFramework} = useSuperfluidFrameworkContext();
     const {setRentingEnabled} = useRentingEnabledContext();
 
-    const handleUpdateFlow = async () => {
-        setToggled(false);
-        setLoading(true);
-        try {
-            await updateSubscription(superfluidFramework, signer, Number(outFlowBalance) + 5);
-            await updateFlowBalance(() => {
-                setLoading(false);
-                setToggled(true);
-            });
-        } catch (error) {
-            router.reload();
-        }
-    };
+    // const handleUpdateFlow = async () => {
+    //     setToggled(false);
+    //     setLoading(true);
+    //     try {
+    //         await updateSubscription(superfluidFramework, signer, Number(outFlowBalance) + 5);
+    //         await updateFlowBalance(() => {
+    //             setLoading(false);
+    //             setToggled(true);
+    //         });
+    //     } catch (error) {
+    //         router.reload();
+    //     }
+    // };
 
-    const handleWrap = async () => {
-        setLoading(true);
-        setToggled(false);
-        await wrap(superfluidFramework, signer, 0.5);
-        await updateSuperTokenBalance(false);
-        setLoading(false);
-        setToggled(true);
-    };
+    // const handleWrap = async () => {
+    //     setLoading(true);
+    //     setToggled(false);
+    //     await wrap(superfluidFramework, signer, 0.5);
+    //     await updateSuperTokenBalance(false);
+    //     setLoading(false);
+    //     setToggled(true);
+    // };
 
     const updateSuperTokenBalance = async on => {
         try {
@@ -118,6 +118,7 @@ const RentController = ({sidebarOpen}) => {
                         setToggle(true);
                     }
                 }
+                setLoading(false);
             }
         }
         try {
@@ -198,10 +199,15 @@ const RentController = ({sidebarOpen}) => {
                 </div>
             ) : (
                 <div className="pb-2 text-center text-sm font-medium">
-                    You have <span className="font-mono font-bold">{booksGivenOnRentCount}</span>{" "}
-                    books given on rent and{" "}
-                    <span className="font-mono font-bold">{booksTakenOnRentCount}</span> books taken
-                    on rent. Clear these records to Update or Delete subscription.
+                    You have{" "}
+                    <span className="font-mono text-lg font-extrabold">
+                        {booksGivenOnRentCount}
+                    </span>{" "}
+                    books given and{" "}
+                    <span className="font-mono text-lg font-extrabold">
+                        {booksTakenOnRentCount}
+                    </span>{" "}
+                    books taken on rent. Clear these records to Update or Delete subscription.
                 </div>
             )}
 
@@ -217,7 +223,7 @@ const RentController = ({sidebarOpen}) => {
                                 {toggled ? (
                                     <div className="flex w-full flex-col items-center justify-between">
                                         <div
-                                            className="group"
+                                            className="group invisible"
                                             onClick={() => {
                                                 handleUpdateFlow();
                                             }}>

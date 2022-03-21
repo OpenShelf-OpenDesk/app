@@ -4,9 +4,11 @@ import {useSignerContext} from "../../contexts/Signer";
 import {cancelOffer, makeOffer} from "../../controllers/Exchange";
 import {executeQuery} from "../../utils/apolloClient";
 import LoadingAnimation from "../common/LoadingAnimation";
+import {useRouter} from "next/router";
 
 const EditionOffersTable = ({editionAddress, refresh, setRefresh, deleteOfferCB, placeOfferCB}) => {
     const {signer} = useSignerContext();
+    const router = useRouter();
     const [editionOffers, setEditionOffers] = useState([]);
     const [placedOffers, setPlacedOffers] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -108,6 +110,10 @@ const EditionOffersTable = ({editionAddress, refresh, setRefresh, deleteOfferCB,
                                                                 setTimeout(() => {
                                                                     deleteOfferCB(4);
                                                                 }, 700);
+                                                                setTimeout(() => {
+                                                                    setLoading(true);
+                                                                    router.reload();
+                                                                }, 1000);
                                                                 setTimeout(() => {
                                                                     setRefresh(state => {
                                                                         return state + 1;
@@ -243,6 +249,10 @@ const EditionOffersTable = ({editionAddress, refresh, setRefresh, deleteOfferCB,
                                                                 setTimeout(() => {
                                                                     placeOfferCB(4);
                                                                 }, 700);
+                                                                setTimeout(() => {
+                                                                    setLoading(true);
+                                                                    router.reload();
+                                                                }, 1000);
                                                                 setTimeout(() => {
                                                                     setRefresh(state => {
                                                                         return state + 1;

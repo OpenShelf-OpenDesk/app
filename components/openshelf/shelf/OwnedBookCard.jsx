@@ -153,14 +153,13 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
             clearInterval(intervalId);
             return;
         }
-        let flowRate = copy.rentRecord.flowRate / 1000; // flowRate in /mSec.
-        const currentInFlowSoFar =
-            (new Date().getTime() - copy.rentRecord.rentStartDate * 1000) * flowRate;
-        setTotalRentRevenue(state => {
-            return state + currentInFlowSoFar;
-        });
-
         if (on) {
+            let flowRate = copy.rentRecord.flowRate / 1000; // flowRate in /mSec.
+            const currentInFlowSoFar =
+                (new Date().getTime() - copy.rentRecord.rentStartDate * 1000) * flowRate;
+            setTotalRentRevenue(state => {
+                return state + currentInFlowSoFar;
+            });
             const id = setInterval(() => {
                 setTotalRentRevenue(state => {
                     const x = state + flowRate * 100;
@@ -182,13 +181,13 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                     <div className="group relative w-[28%]">
                         <div
                             className={`absolute inset-0 flex h-[300px] w-full items-center justify-center rounded border-2 border-gray-500 transition-all duration-300 ease-in-out ${
-                                loading ? "opacity-100" : "opacity-0"
+                                loading ? "z-10 opacity-100" : "-z-10 opacity-0"
                             }`}>
                             <LoadingAnimation />
                         </div>
                         <div
                             className={`h-[300px] snap-start rounded bg-transparent transition duration-500 ease-in-out ${
-                                !loading ? "opacity-100" : "opacity-0"
+                                !loading ? "z-10 opacity-100" : "-z-10 opacity-0"
                             }`}>
                             {!loading && (
                                 <div>
@@ -461,6 +460,10 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                                                                     4
                                                                                 );
                                                                             }, 700);
+                                                                            setTimeout(() => {
+                                                                                setLoading(true);
+                                                                                router.reload();
+                                                                            }, 1000);
                                                                         }}>
                                                                         Remove From Rent
                                                                     </button>
@@ -514,6 +517,10 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                                                                 5
                                                                             );
                                                                         }, 700);
+                                                                        setTimeout(() => {
+                                                                            setLoading(true);
+                                                                            router.reload();
+                                                                        }, 1000);
                                                                     }}>
                                                                     Put On Rent
                                                                 </button>
