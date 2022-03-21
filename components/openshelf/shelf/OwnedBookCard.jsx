@@ -179,7 +179,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                 <ProgressStatus
                     status={progressStatusAcceptOffer}
                     statusTags={statusTagsAcceptOffer}>
-                    <div className="group relative">
+                    <div className="group relative w-[540px]">
                         <div
                             className={`absolute inset-0 flex h-[300px] w-full items-center justify-center rounded border-2 border-gray-500 transition-all duration-300 ease-in-out ${
                                 loading ? "opacity-100" : "opacity-0"
@@ -220,7 +220,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
                                         </div>
                                     </div>
                                     {showOffers ? (
-                                        <div className="flex h-[300px] items-center rounded border-2 border-gray-500 p-5">
+                                        <div className="flex h-[300px] w-full items-center rounded border-2 border-gray-500 p-5">
                                             <CopyOffersTable
                                                 editionId={editionId}
                                                 copyUid={copyUid}

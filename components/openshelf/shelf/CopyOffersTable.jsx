@@ -41,7 +41,7 @@ const CopyOffersTable = ({editionId, copyUid, setShowOffers, royalty, setProgres
                 <LoadingAnimation />
             </div>
             <div
-                className={`flex h-full rounded bg-transparent transition duration-500 ease-in-out ${
+                className={`flex h-full w-full rounded bg-transparent transition duration-500 ease-in-out ${
                     !loading ? "z-10 opacity-100" : "-z-10 opacity-0"
                 }`}>
                 {!loading && (
