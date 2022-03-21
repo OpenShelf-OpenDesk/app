@@ -56,7 +56,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
 
     const statusTagsRemoveFromRent = [
         "Transaction Initiated",
-        "Book Removed from Rent",
+        "Removing Book from Rent",
         "Transaction Successful"
     ];
 
@@ -158,7 +158,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
             const currentInFlowSoFar =
                 (new Date().getTime() - copy.rentRecord.rentStartDate * 1000) * flowRate;
             setTotalRentRevenue(state => {
-                return state + currentInFlowSoFar;
+                return currentInFlowSoFar;
             });
             const id = setInterval(() => {
                 setTotalRentRevenue(state => {
