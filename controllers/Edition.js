@@ -71,12 +71,30 @@ export async function uri(signer, editionAddress, copyUid) {
     );
 }
 
-export async function redeem(signer, editionAddress, voucher) {
-    await callContract(signer, editionAddress, async contract => {
-        const transaction = await contract.redeem(voucher);
-        const transactionStatus = await transaction.wait();
-        console.log(transactionStatus);
-    });
+export async function redeem(signer, editionAddress, voucher, voucherPrice, cb) {
+    cb(1);
+    await callContract(
+        signer,
+        editionAddress,
+        async contract => {
+            const transaction = await contract.redeem(voucher, {
+                value: ethers.utils.parseUnits(voucherPrice.toString(), "ether")
+            });
+            cb(2);
+            cb(3);
+            const transactionStatus = await transaction.wait();
+            cb(4);
+            console.log(transactionStatus);
+        },
+        async error => {
+            if (error.code === 4001) {
+                cb(-2);
+            } else {
+                cb(-3);
+                cb(-4);
+            }
+        }
+    );
 }
 
 export async function verifyOwnership(signer, editionAddress, owner, copyUid, distributed) {

@@ -160,9 +160,9 @@ const Sidebar = ({open, setOpen, signer}) => {
                                         : "font-medium hover:font-semibold"
                                 }`}
                                 onClick={() => {
-                                    if (router.pathname !== "/openshelf/desk") {
+                                    if (router.pathname !== "/opendesk/desk") {
                                         setLoading(true);
-                                        router.push("/openshelf/desk");
+                                        router.push("/opendesk/desk");
                                     }
                                 }}>
                                 Desk
