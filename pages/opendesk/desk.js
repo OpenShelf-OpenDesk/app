@@ -11,7 +11,7 @@ import Image from "next/image";
 const Desk = () => {
     const {signer} = useSignerContext();
     const [contributions, setContributions] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const {setTheme} = useThemeContext();
     const {setLoading: setMainLoading} = useLoadingContext();
 
@@ -26,7 +26,6 @@ const Desk = () => {
 
     useEffect(() => {
         const getData = async () => {
-            setLoading(true);
             const contributionsData = await executeQuery(`
             query{
                 contributorProfile(id:"${signer.address.toLowerCase()}"){
@@ -35,8 +34,8 @@ const Desk = () => {
                     }
                 }
             }`);
-            console.log(contributionsData);
-            setContributions(contributionsData.contributorProfile.contributions);
+            contributionsData.contributorProfile &&
+                setContributions(contributionsData.contributorProfile.contributions);
             setLoading(false);
         };
         getData();
@@ -59,7 +58,7 @@ const Desk = () => {
                         {!loading && (
                             <div className="relative h-full">
                                 <div
-                                    className={`flex flex-col space-y-5 transition duration-500 ease-in-out ${
+                                    className={`grid grid-cols-2 gap-10 transition duration-500 ease-in-out ${
                                         contributions.length > 0 ? "opacity-100" : "opacity-0"
                                     }`}>
                                     {contributions.length > 0 &&

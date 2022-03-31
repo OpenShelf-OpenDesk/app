@@ -7,6 +7,7 @@ import LoadingAnimation from "../../common/LoadingAnimation";
 import PreviewBookCoverPage from "../../common/PreviewBookCoverPage";
 import {useLoadingContext} from "../../../contexts/Loading";
 import {eBookVoucherGenerator} from "../../../utils/eBookVoucherGenerator";
+import BigNumber from "bignumber.js";
 
 const PublishedBookCard = ({contributionId}) => {
     const router = useRouter();
@@ -95,36 +96,23 @@ const PublishedBookCard = ({contributionId}) => {
                 }`}>
                 {!loading && (
                     <>
-                        <div className="group flex h-full w-full items-center rounded border-2 border-gray-500 bg-white">
+                        <div className="group relative flex h-full w-full items-center rounded border-2 border-gray-500 bg-white">
                             <div
-                                className={`rounded bg-white shadow-md transition duration-300 ease-in-out group-hover:scale-[1.03]`}>
+                                className={`absolute z-10 origin-top-left -translate-x-1 overflow-visible rounded bg-white opacity-100 shadow-md transition duration-300 ease-in-out group-hover:opacity-0`}>
                                 <div className="h-full w-full rounded">
                                     <PreviewBookCoverPage
                                         src={book.edition.editionMetadata.coverPage}
-                                        height={395}
+                                        height={400}
                                         width={300}
                                     />
                                 </div>
                             </div>
-                            <div className="relative flex h-full w-full flex-col justify-center space-y-5 px-7">
-                                <ExternalLinkIcon
-                                    className="invisible absolute top-2 right-2 h-5 w-5 cursor-pointer text-gray-700 opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100"
-                                    onClick={() => {
-                                        setMainLoading(true);
-                                        router.push(`/openshelf/book/${book.edition.id}`);
-                                    }}
-                                />
-                                <p className="text-left text-xl font-semibold">
-                                    {book.edition.editionMetadata.title}
-                                </p>
-                                <div>{"All Stats of Book "}</div>
-                            </div>
                             {voucherLoading ? (
-                                <div className="flex h-full w-1/3 items-center justify-center border-l-2 border-gray-500 px-7">
+                                <div className="flex h-full min-w-[300px] items-center justify-center pl-5">
                                     <LoadingAnimation />
                                 </div>
                             ) : voucherGenerated ? (
-                                <div className="flex h-full w-1/3 flex-col justify-evenly border-l-2 border-gray-500 px-7">
+                                <div className="flex h-full min-w-[300px] -translate-x-1 flex-col justify-evenly pl-5">
                                     <p className="text-center text-lg font-semibold text-od-500">
                                         Book Voucher Details
                                     </p>
@@ -168,7 +156,7 @@ const PublishedBookCard = ({contributionId}) => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="flex h-full w-1/3 flex-col justify-evenly border-l-2 border-gray-500  px-7">
+                                <div className="flex h-full min-w-[300px] -translate-x-1 flex-col justify-evenly pl-5">
                                     <div className="w-full text-center text-lg font-semibold text-od-500">
                                         Create Book Voucher
                                     </div>
@@ -225,6 +213,119 @@ const PublishedBookCard = ({contributionId}) => {
                                     </form>
                                 </div>
                             )}
+                            <div className="flex h-full w-full flex-col justify-between space-y-5 px-7 pb-7">
+                                <ExternalLinkIcon
+                                    className="invisible absolute top-2 right-2 h-5 w-5 cursor-pointer text-gray-700 opacity-0 transition duration-100 ease-in-out group-hover:visible group-hover:opacity-100"
+                                    onClick={() => {
+                                        setMainLoading(true);
+                                        router.push(`/openshelf/book/${book.edition.id}`);
+                                    }}
+                                />
+                                <div className="text-left text-xl font-semibold">
+                                    {book.edition.editionMetadata.title}
+                                </div>
+                                <div className="grid w-full grid-cols-3 gap-3">
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">Price</p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">Royalty</p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">Supply Limit</p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">Sales Revenue</p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">Royalty Revenue</p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            Distribution Revenue
+                                        </p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">Transfer Volume</p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            Withdrawable Revenue
+                                        </p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            Priced Books Printed
+                                        </p>
+                                    </div>
+                                    <div className="my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">
+                                            Distribution Books Printed
+                                        </p>
+                                    </div>
+                                    <div className="col-span-2 my-2 flex flex-col items-center">
+                                        <p className="text-base font-semibold">
+                                            {new BigNumber(book.edition.price)
+                                                .shiftedBy(-18)
+                                                .toFixed(4)}
+                                        </p>
+                                        <p className="text-xs text-gray-400">Total Sales Revenue</p>
+                                    </div>
+                                </div>
+                                <div className="self-end">
+                                    <button className="button-od">Withdraw Revenue</button>
+                                </div>
+                            </div>
                         </div>
                     </>
                 )}
