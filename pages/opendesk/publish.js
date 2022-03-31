@@ -131,7 +131,7 @@ const Publish = () => {
             }, 700);
             setTimeout(() => {
                 setLoading(true);
-                router.push(`/opendesk`);
+                router.push(`/opendesk/desk`);
             }, 1000);
             console.log(newBook);
         } else {
