@@ -45,7 +45,7 @@ const OwnedBookCard = ({editionId, copyUid, owner}) => {
 
     const statusTagsPutOnRent = [
         "Transaction Initiated",
-        "Locking Book With Rentor",
+        "Locking Book",
         "Putting Book on Rent",
         "Transaction Successful"
     ];
