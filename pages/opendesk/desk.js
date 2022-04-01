@@ -26,6 +26,7 @@ const Desk = () => {
 
     useEffect(() => {
         const getData = async () => {
+            setContributions([]);
             const contributionsData = await executeQuery(`
             query{
                 contributorProfile(id:"${signer.address.toLowerCase()}"){
@@ -34,9 +35,11 @@ const Desk = () => {
                     }
                 }
             }`);
-            contributionsData.contributorProfile &&
-                setContributions(contributionsData.contributorProfile.contributions);
+            contributionsData.contributorProfile
+                ? setContributions(contributionsData.contributorProfile.contributions)
+                : setContributions([]);
             setLoading(false);
+            console.log(signer.address.toLowerCase(), contributionsData.contributorProfile);
         };
         getData();
     }, [signer]);
