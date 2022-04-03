@@ -674,9 +674,9 @@ const PublishedBookCard = ({contributionId}) => {
                                             <div className="flex items-center space-x-1">
                                                 <p className="font-mono text-2xl font-black">
                                                     {new BigNumber(
-                                                        book.edition.salesRevenue +
-                                                            book.edition.royaltyRevenue +
-                                                            book.edition.distributionRevenue
+                                                        Number(book.edition.salesRevenue) +
+                                                            Number(book.edition.royaltyRevenue) +
+                                                            Number(book.edition.distributionRevenue)
                                                     )
                                                         .shiftedBy(-18)
                                                         .toFixed(4)}
