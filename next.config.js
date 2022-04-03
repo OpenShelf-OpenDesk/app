@@ -4,7 +4,7 @@ module.exports = {
     //     domains: ["picsum.photos"]
     // }
     images: {
-        loader: "akamai",
+        loader: "default",
         path: ""
     }
 };
