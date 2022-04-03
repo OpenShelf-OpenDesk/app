@@ -137,7 +137,7 @@ const PublishedBookCard = ({contributionId}) => {
                         <>
                             <div className="group relative flex h-full w-full items-center rounded border-2 border-gray-500 bg-white">
                                 <div
-                                    className={`absolute z-10 origin-top-left -translate-x-1 overflow-visible rounded bg-white opacity-100 shadow-md transition duration-300 ease-in-out group-hover:opacity-0`}>
+                                    className={`absolute z-10 origin-top-left -translate-x-1 overflow-visible rounded bg-white opacity-100 shadow-md transition duration-300 ease-in-out group-hover:-z-10 group-hover:opacity-0`}>
                                     <div className="h-full w-full rounded">
                                         <PreviewBookCoverPage
                                             src={book.edition.editionMetadata.coverPage}
