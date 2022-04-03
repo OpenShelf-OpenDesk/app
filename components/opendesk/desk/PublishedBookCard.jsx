@@ -122,7 +122,7 @@ const PublishedBookCard = ({contributionId}) => {
 
     return (
         <ProgressStatus status={progressStatusWithdraw} statusTags={statusTagsWithdraw}>
-            <div className="group relative h-[400px] w-full">
+            <div className="group relative h-[400px] w-[43%]">
                 <div
                     className={`absolute inset-0 flex h-full w-full items-center justify-center rounded border-2 border-gray-500 transition-all duration-300 ease-in-out ${
                         loading ? "z-10 opacity-100" : "-z-10 opacity-0"
@@ -401,7 +401,7 @@ const PublishedBookCard = ({contributionId}) => {
                                                                             return stat + 1;
                                                                         });
                                                                         setEditRoyalty(false);
-                                                                    });
+                                                                    }, 1000);
                                                                 }
                                                             }}
                                                         />
@@ -482,7 +482,7 @@ const PublishedBookCard = ({contributionId}) => {
                                                                             return stat + 1;
                                                                         });
                                                                         setEditSupply(false);
-                                                                    });
+                                                                    }, 1000);
                                                                 } else if (
                                                                     !book.edition.supplyLimited &&
                                                                     increaseSupplyBy > 0
@@ -502,7 +502,7 @@ const PublishedBookCard = ({contributionId}) => {
                                                                             return stat + 1;
                                                                         });
                                                                         setEditSupply(false);
-                                                                    });
+                                                                    }, 1000);
                                                                 }
                                                             }}
                                                         />
@@ -520,7 +520,7 @@ const PublishedBookCard = ({contributionId}) => {
                                                                             return stat + 1;
                                                                         });
                                                                         setEditSupply(false);
-                                                                    });
+                                                                    }, 1000);
                                                                 }}
                                                             />
                                                         )}
