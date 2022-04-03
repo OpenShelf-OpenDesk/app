@@ -23,6 +23,9 @@ export async function connectToWallet(networkUpdated, signerUpdated) {
         console.log(chainId);
         const network = await provider.getNetwork();
         networkUpdated(network);
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+        signerUpdated(signer, address);
     });
 
     // Subscribe to provider connection
@@ -31,6 +34,9 @@ export async function connectToWallet(networkUpdated, signerUpdated) {
         console.log(info);
         const network = await provider.getNetwork();
         networkUpdated(network);
+        const signer = await provider.getSigner();
+        const address = await signer.getAddress();
+        signerUpdated(signer, address);
     });
 
     // Subscribe to provider disconnection
