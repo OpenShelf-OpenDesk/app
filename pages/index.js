@@ -2,7 +2,7 @@ import {useRouter} from "next/router";
 import {useEffect} from "react";
 import {useLoadingContext} from "../contexts/Loading";
 
-const index = () => {
+const Index = () => {
     const {setLoading} = useLoadingContext();
     const router = useRouter();
     useEffect(() => {
@@ -15,4 +15,4 @@ const index = () => {
     return <></>;
 };
 
-export default index;
+export default Index;
