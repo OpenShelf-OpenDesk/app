@@ -4,7 +4,6 @@ module.exports = {
     //     domains: ["picsum.photos"]
     // }
     images: {
-        loader: "default",
-        path: ""
+        disableStaticImages: true
     }
 };
