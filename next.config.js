@@ -1,6 +1,10 @@
 module.exports = {
     reactStrictMode: true,
+    // images: {
+    //     domains: ["picsum.photos"]
+    // }
     images: {
-        domains: ["picsum.photos"]
+        loader: "akamai",
+        path: "/"
     }
 };
